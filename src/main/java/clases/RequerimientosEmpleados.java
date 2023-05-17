@@ -17,25 +17,15 @@ public class RequerimientosEmpleados {
      * @param numeroAttPublico
      * @throws IOException 
      */
-    public RequerimientosEmpleados(String csvFile) throws IOException {
+    public RequerimientosEmpleados(Integer visitas, Integer numeroCajeros, Integer numeroAlmacen, Integer numAttPublico) {
 	super();
-	String line;
-	String csvSplitBy = ";";
-	BufferedReader br = new BufferedReader(new FileReader(csvFile));
-	br.readLine();
-	while ((line = br.readLine()) != null) {
-            // Usa punto y coma como separador
-            String[] values = line.split(csvSplitBy);
-
-            // Añade los valores a los campos de la clase
-            this.visitas = Integer.parseInt(values[0]);
-            this.numeroCajeros = Integer.parseInt(values[1]);
-            this.numeroAlmacen = Integer.parseInt(values[2]);
-            this.numeroAttPublico = Integer.parseInt(values[3]);
+	
+            this.visitas = visitas;
+            this.numeroCajeros = numeroCajeros;
+            this.numeroAlmacen = numeroAlmacen;
+            this.numeroAttPublico = numAttPublico;
         }
 	
-	
-    }
     /**
      * @return the visitas
      */
