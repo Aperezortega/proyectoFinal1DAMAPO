@@ -4,22 +4,20 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import enums.GruposEmpleados;
+
 public class GrupoEmpleados {
-    public enum Grupo {
-        GRUPO_A,
-        GRUPO_B,
-        GRUPO_C
-    }
-    private Grupo nombreGrupo;
+  
+    private GruposEmpleados nombreGrupo;
     private ArrayList<Empleado> empleados;
 
     
-    public GrupoEmpleados(Grupo nombreGrupo, ArrayList<Empleado> empleados) {
+    public GrupoEmpleados(GruposEmpleados nombreGrupo, ArrayList<Empleado> empleados) {
         this.nombreGrupo = nombreGrupo;
         this.empleados = empleados;
     }
 
-    public Grupo getNombreGrupo() {
+    public GruposEmpleados getNombreGrupo() {
         return nombreGrupo;
     }
 
@@ -64,7 +62,7 @@ public class GrupoEmpleados {
     
     
     @Override
-    public String toString() {
+    public String toString() { 
         StringBuilder sb = new StringBuilder();
         sb.append("Grupo ").append(nombreGrupo).append(":\n");
 
