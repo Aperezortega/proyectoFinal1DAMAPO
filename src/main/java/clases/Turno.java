@@ -31,6 +31,15 @@ public class Turno {
 	this.empleado = empleado;
 	this.funcion = funcion;
     }
+    public Turno(String idTurno, LocalDate fechaTurno, LocalTime horaInicio, LocalTime horaFin,
+	    Funcion funcion) {
+	super();
+	this.idTurno = idTurno;
+	this.fechaTurno = fechaTurno;
+	this.horaInicio = horaInicio;
+	this.horaFin = horaFin;
+	this.funcion = funcion;
+    }
     /**
      * @return the idTurno
      */
@@ -106,10 +115,15 @@ public class Turno {
     
     @Override
     public String toString() {
-	
-	return "Turno" + idTurno + ", de, "+ empleado.getNombre()+", Rol: "+ funcion +", "+ fechaTurno + ", horaInicio=" + horaInicio + ", horaFin="
-		+ horaFin ;
+        String idTurnoFormateado = String.format("%-22s", idTurno);
+        
+        if(this.empleado==null) {
+            return idTurnoFormateado + ", horaInicio=" + horaInicio + ", horaFin="+ horaFin ;   
+        } else {
+            return idTurnoFormateado + empleado.getNombre() + ", horaInicio=" + horaInicio + ", horaFin="+ horaFin ; 
+        }
     }
 
+    }
     
-}
+

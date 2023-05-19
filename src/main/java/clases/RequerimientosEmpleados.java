@@ -3,6 +3,7 @@ package clases;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class RequerimientosEmpleados {
 
@@ -26,6 +27,15 @@ public class RequerimientosEmpleados {
             this.numeroAttPublico = numAttPublico;
         }
 	
+    public static String imprimirRequerimientos(ArrayList<RequerimientosEmpleados> requerimientos) {
+	    String ret ="";
+	    for (RequerimientosEmpleados req : requerimientos) {
+	        ret+=" " + req.toString();
+	    }
+	    return ret;
+	}
+
+    
     /**
      * @return the visitas
      */
@@ -77,7 +87,7 @@ public class RequerimientosEmpleados {
     @Override
     public String toString() {
 	return "RequerimientosEmpleados [visitas=" + visitas + ", numeroCajeros=" + numeroCajeros + ", numeroAlmacen="
-		+ numeroAlmacen + ", numeroAttPublico=" + numeroAttPublico + "]";
+		+ numeroAlmacen + ", numeroAttPublico=" + numeroAttPublico + "]\n";
     }
     
     
