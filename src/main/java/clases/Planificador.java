@@ -7,13 +7,15 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import enums.Funcion;
     
     public class Planificador {
         
-        private PrevisionVisitas prevision;
+        private PrevisionFecha prevision;
         private ArrayList<Empleado> listaEmpleados;
         private List<Turno> listaTurnos;
         private static ArrayList<RequerimientosEmpleados> requerimientos;
@@ -27,7 +29,7 @@ import enums.Funcion;
          * @param listaTurnos
          * @throws IOException 
          */
-        public Planificador(PrevisionVisitas prevision, ArrayList<Empleado> listaEmpleados, ArrayList<Turno> listaTurnos) throws IOException {
+        public Planificador(PrevisionFecha prevision, ArrayList<Empleado> listaEmpleados, ArrayList<Turno> listaTurnos) throws IOException {
     	super();
     	if(requerimientos==null) {
     	    requerimientos= generarRequerimientos(csvFile);
@@ -37,7 +39,7 @@ import enums.Funcion;
     	this.listaTurnos = listaTurnos;
         }
     
-        public Planificador (PrevisionVisitas prevision) throws IOException {
+        public Planificador (PrevisionFecha prevision) throws IOException {
         super();
         if(requerimientos==null) {
     	    requerimientos= generarRequerimientos(csvFile);
@@ -56,92 +58,137 @@ import enums.Funcion;
     		while ((line = br.readLine()) != null) {
     	            String[] values = line.split(csvSplitBy);
     	            Integer visitas = Integer.parseInt(values[0]);
-    	            Integer numeroCajeros = Integer.parseInt(values[1]);
-    	            Integer numeroAlmacen = Integer.parseInt(values[2]);
-    	            Integer numeroAttPublico = Integer.parseInt(values[3]);
+    	            byte numeroCajeros = Byte.parseByte(values[1]);
+    	            byte numeroAlmacen = Byte.parseByte(values[2]);
+    	            byte numeroAttPublico = Byte.parseByte(values[3]);
     	            RequerimientosEmpleados requerimiento = new RequerimientosEmpleados(visitas, numeroCajeros, numeroAlmacen, numeroAttPublico);
     	            ret.add(requerimiento);
     			}
     	        br.close();
     	       
     	        return ret;
-        		}
-
-        public List<Turno> generarTurnos(PrevisionVisitas previsiones) {
+     }
+        
+        public List<Turno> generarTurnos(PrevisionFecha previsiones) {
             List<Turno> turnos = new ArrayList<Turno>();
-
-            // Asumiendo que las previsiones están ordenadas por hora,
-            // y que la hora de inicio de los turnos es a las 10:00.
-            int duracionMaximaTurno = 5;
-            LocalTime horaInicio = LocalTime.of(10, 0);
-            LocalTime horaFin = horaInicio.plusHours(duracionMaximaTurno);
-            for (Integer visitas : previsiones.getPrevision()) {
-                byte numCajeros = 0;
-                byte numAlmacen = 0;
-                byte numAttPublico = 0;
-                //contadores para  id
-                byte countCajeros = 0;
-                byte countAlmacen = 0;
-                byte countAttPublico = 0;
-
-                // Comprueba los requisitos para el número de visitas.
-                if (visitas >= 600) {
-                    numCajeros = 3;
-                    numAlmacen = 3;
-                    numAttPublico = 3;
-                } else if (visitas >= 500) {
-                    numCajeros = 3;
-                    numAlmacen = 2;
-                    numAttPublico = 3;
-                } else if (visitas >= 350) {
-                    numCajeros = 2;
-                    numAlmacen = 2;
-                    numAttPublico = 3;
-                } else if (visitas >= 200) {
-                    numCajeros = 2;
-                    numAlmacen = 1;
-                    numAttPublico = 2;
-                } else { // Menos de 200 visitas
-                    numCajeros = 1;
-                    numAlmacen = 1;
-                    numAttPublico = 2;
-                }
-
-                 //Genera los turnos para cada función.
-                for (int i = 0; i < numCajeros; i++) {
-                    countCajeros++;
-                    String idTurno = previsiones.getFecha().toString() + "Caja" + countCajeros;
-                    Turno turno = new Turno(idTurno,previsiones.getFecha(), horaInicio, horaFin, Funcion.CAJA);
-                    turnos.add(turno);
-                }
-                for (int i = 0; i < numAlmacen; i++) {
-                    countAlmacen++;
-                    String idTurno = previsiones.getFecha().toString() + "Almacen" + countCajeros;
-                    Turno turno = new Turno(idTurno,previsiones.getFecha(), horaInicio, horaFin, Funcion.ALMACEN);;
-                    turnos.add(turno);
-                }
-                for (int i = 0; i < numAttPublico; i++) {
-                    countAttPublico++;
-                    String idTurno = previsiones.getFecha().toString() + "AttPublico" + countCajeros;
-                    Turno turno = new Turno(idTurno,previsiones.getFecha(), horaInicio, horaFin, Funcion.ATTPUBLICO);
-                    turnos.add(turno);
-                }
-
-                // Incrementa la hora de inicio para el siguiente ciclo.
-                horaInicio = horaInicio.plusHours(1);
-                
+           
+            byte numCajerosAnterior = 0;
+            byte countCajeros = 0;
+            byte numAlmacenAnterior = 0;
+            byte countAlmacen = 0;
+            byte numAttPublicoAnterior = 0;
+            byte countAttPublico = 0;
+            // Asume que el supermercado abre a las 10:00
+            for(PrevisionHora prevision : previsiones.getPrevision()) {
+        	Integer visitas = prevision.getPrevision();
+        	LocalTime horaInicio = prevision.getHora();
+        	
+        	//para calcular cajeros
+        	byte numCajerosActual = (byte) calcularNumCajeros(visitas);
+        	if(numCajerosActual>numCajerosAnterior) {
+        	    for(byte j = numCajerosAnterior; j<numCajerosActual; j++) {
+        		LocalTime horaFin = calcularHoraFin(horaInicio);
+        		countCajeros++;
+        		String idTurno = previsiones.getFecha().toString() + "Caja" + countCajeros;
+        		Turno turno = new Turno(idTurno, previsiones.getFecha(), horaInicio, horaFin, Funcion.CAJA);
+                        turnos.add(turno);
+        	    }
+        	}
+        	numCajerosAnterior = numCajerosActual;
+        	
+        	
+        	//para calcular operarios almacen
+        	byte numAlmacenActual = calcularNumAlmacen(visitas);
+        	if(numAlmacenActual>numAlmacenAnterior) {
+        	    for(byte j = numAlmacenAnterior; j<numAlmacenActual; j++) {
+        		LocalTime horaFin = calcularHoraFin(horaInicio);
+        		countAlmacen++;
+        		String idTurno = previsiones.getFecha().toString()+ "Almacen" +countAlmacen;
+        		Turno turno = new Turno(idTurno, previsiones.getFecha(),horaInicio, horaFin, Funcion.ALMACEN);
+        		turnos.add(turno);
+        	    }
+        	}
+        	numAlmacenAnterior = numAlmacenActual;
+        	
+        	
+        	//para Calcular numero de operarios de Atencion al publico
+        	
+        	byte numAttPublicoActual = calcularNumAttPublico(visitas);
+        	if(numAttPublicoActual>numAttPublicoAnterior) {
+        	    for(byte j =numAttPublicoAnterior; j<numAttPublicoActual; j++) {
+        		LocalTime horaFin = calcularHoraFin(horaInicio);
+        		countAttPublico++;
+        		String idTurno = previsiones.getFecha().toString()+ "AttPublico"+ countAttPublico;
+        		Turno turno = new Turno(idTurno, previsiones.getFecha(), horaInicio, horaFin, Funcion.ATTPUBLICO);
+        		turnos.add(turno);
+        	    }
+        	    
+        	}
+        	numAttPublicoAnterior = numAttPublicoActual;
+            }
+            return turnos;
+        }
+            
+       
+        private byte calcularNumCajeros(int visitas) {
+            Collections.sort(requerimientos, Comparator.comparing(RequerimientosEmpleados::getVisitas));
+            byte numCajeros =1;
+            
+            for (RequerimientosEmpleados req : requerimientos) {
+        	if(visitas>= req.getVisitas()) {
+        	    numCajeros =  (byte) req.getNumeroCajeros();
+        	    }else {
+        		break;
+        	    }
+        	}
+            return numCajeros;
+            }
+        private byte calcularNumAlmacen(int visitas) {
+            Collections.sort(requerimientos, Comparator.comparing(RequerimientosEmpleados::getVisitas));
+            byte numAlmacen =1;
+            
+            for (RequerimientosEmpleados req : requerimientos) {
+        	if(visitas>= req.getVisitas()) {
+        	    numAlmacen =  (byte) req.getNumeroAlmacen();
+        	    }else {
+        		break;
+        	    }
+        	}
+            return numAlmacen;
+            }    
+        private byte calcularNumAttPublico(int visitas) {
+            Collections.sort(requerimientos, Comparator.comparing(RequerimientosEmpleados::getVisitas));
+            byte numAttPublico =2;
+            
+            for (RequerimientosEmpleados req : requerimientos) {
+        	if(visitas>= req.getVisitas()) {
+        	    numAttPublico =  (byte) req.getNumeroAttPublico();
+        	    }else {
+        		break;
+        	    }
+        	}
+            return numAttPublico;
             }
 
-            return turnos;
+        private LocalTime calcularHoraFin(LocalTime horaInicio) {
+            // Calcula la hora de finalización del turno de 5 horas
+            LocalTime horaFin = horaInicio.plusHours(5);
+
+            // Asegúrate de que la hora de finalización no supere la hora de cierre del supermercado
+            if (horaFin.isAfter(LocalTime.of(20, 0))) {
+                horaFin = LocalTime.of(20, 0);
+            }
+
+            return horaFin;
         }
 
         
         
         
         
-        /**
-	 * @return the listaTurnos
-	 */
+        
+        
+
 	public List<Turno> getListaTurnos() {
 	    return listaTurnos;
 	}
@@ -171,7 +218,7 @@ import enums.Funcion;
 
             LocalTime horaInicio = LocalTime.of(10, 0);
 
-            for (Integer prevision : this.prevision.getPrevision()) {
+            for (PrevisionHora prevision : this.prevision.getPrevision()) {
                 // Contadores de turnos asignados
                 int numCajeros = 0;
                 int numAlmacen = 0;
@@ -185,7 +232,7 @@ import enums.Funcion;
                 // Obtén los requisitos de empleados para la previsión actual
                 RequerimientosEmpleados reqPrev = null;
                 for (RequerimientosEmpleados req : requerimientos) {
-                    if (req.getVisitas() <= prevision) {
+                    if (req.getVisitas() <= prevision.getPrevision()) {
                         reqPrev = req;
                     } else {
                         break;
@@ -198,7 +245,7 @@ import enums.Funcion;
                 }
 
                 for (Turno turno : listaTurnos) {
-                    if (turno.getHoraInicio().equals(horaInicio)) {
+                    if (turno.getHoraInicio().isBefore(horaInicio.plusHours(1)) && turno.getHoraFin().isAfter(horaInicio)) {
                         switch (turno.getFuncion()) {
                             case CAJA:
                                 numCajeros++;
@@ -212,6 +259,7 @@ import enums.Funcion;
                         }
                     }
                 }
+
 
                 str.append("Hora: ").append(horaInicio.toString()).append("   Previsión: ").append(prevision)
                    .append("   Cajeros: ").append(numCajeros).append("/").append(numCajerosRequeridos)

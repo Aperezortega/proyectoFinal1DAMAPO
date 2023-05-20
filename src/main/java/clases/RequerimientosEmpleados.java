@@ -8,9 +8,9 @@ import java.util.ArrayList;
 public class RequerimientosEmpleados {
 
     private int visitas;
-    private int numeroCajeros;
-    private int numeroAlmacen;
-    private int numeroAttPublico;
+    private byte numeroCajeros;
+    private byte numeroAlmacen;
+    private byte numeroAttPublico;
     /**
      * @param visitas
      * @param numeroCajeros
@@ -18,7 +18,7 @@ public class RequerimientosEmpleados {
      * @param numeroAttPublico
      * @throws IOException 
      */
-    public RequerimientosEmpleados(Integer visitas, Integer numeroCajeros, Integer numeroAlmacen, Integer numAttPublico) {
+    public RequerimientosEmpleados(Integer visitas, byte numeroCajeros, byte numeroAlmacen, byte numAttPublico) {
 	super();
 	
             this.visitas = visitas;
@@ -51,13 +51,13 @@ public class RequerimientosEmpleados {
     /**
      * @return the numeroCajeros
      */
-    public int getNumeroCajeros() {
-        return numeroCajeros;
+    public byte getNumeroCajeros() {
+        return (byte) numeroCajeros;
     }
     /**
      * @param numeroCajeros the numeroCajeros to set
      */
-    public void setNumeroCajeros(int numeroCajeros) {
+    public void setNumeroCajeros(byte numeroCajeros) {
         this.numeroCajeros = numeroCajeros;
     }
     /**
@@ -69,7 +69,7 @@ public class RequerimientosEmpleados {
     /**
      * @param numeroAlmacen the numeroAlmacen to set
      */
-    public void setNumeroAlmacen(int numeroAlmacen) {
+    public void setNumeroAlmacen(byte numeroAlmacen) {
         this.numeroAlmacen = numeroAlmacen;
     }
     /**
@@ -81,7 +81,7 @@ public class RequerimientosEmpleados {
     /**
      * @param numeroAttPublico the numeroAttPublico to set
      */
-    public void setNumeroAttPublico(int numeroAttPublico) {
+    public void setNumeroAttPublico(byte numeroAttPublico) {
         this.numeroAttPublico = numeroAttPublico;
     }
     @Override

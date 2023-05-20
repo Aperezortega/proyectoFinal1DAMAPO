@@ -5,15 +5,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import clases.Planificador;
-import clases.PrevisionVisitas;
+import clases.PrevisionFecha;
 import clases.RequerimientosEmpleados;
 
 public class Main {
 
     public static void main(String[] args) {
-	PrevisionVisitas p=null;
+	PrevisionFecha p=null;
 	try {
-	      p= new PrevisionVisitas("prevision.csv", LocalDate.now());
+	      p= new PrevisionFecha("prevision.csv", LocalDate.now());
 	} catch (IOException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();

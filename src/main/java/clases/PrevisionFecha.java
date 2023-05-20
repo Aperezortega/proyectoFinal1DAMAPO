@@ -3,30 +3,34 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
 
-public class PrevisionVisitas {
+public class PrevisionFecha {
 
     private LocalDate fecha;
-    private ArrayList<Integer> prevision;
+    private ArrayList<PrevisionHora> prevision;
     
-    public PrevisionVisitas(String csvFile, LocalDate fecha) throws IOException {
+    
+    
+    public PrevisionFecha(String csvFile, LocalDate fecha) throws IOException {
         this.fecha = fecha;
-        this.prevision=new ArrayList<Integer>();
+        this.prevision=new ArrayList<PrevisionHora>();
         String line;
         String cvsSplitBy = ";";
 
         BufferedReader br = new BufferedReader(new FileReader(csvFile));
-            
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         br.readLine();
         while ((line = br.readLine()) != null) {
             // Usa coma como separador
             String[] values = line.split(cvsSplitBy);
 
-            // Añade la previsión a la lista
-            this.prevision.add(Integer.parseInt(values[1]));
+            PrevisionHora prevision = new PrevisionHora(LocalTime.parse(values[0], formatter),Integer.parseInt(values[1]));
+            this.prevision.add(prevision);
  
 
         }
@@ -35,12 +39,16 @@ public class PrevisionVisitas {
         
     }
 
+
+
     /**
      * @return the fecha
      */
     public LocalDate getFecha() {
         return fecha;
     }
+
+
 
     /**
      * @param fecha the fecha to set
@@ -49,24 +57,38 @@ public class PrevisionVisitas {
         this.fecha = fecha;
     }
 
+
+
     /**
      * @return the prevision
      */
-    public ArrayList<Integer> getPrevision() {
+    public ArrayList<PrevisionHora> getPrevision() {
         return prevision;
     }
+
+
 
     /**
      * @param prevision the prevision to set
      */
-    public void setPrevision(ArrayList<Integer> prevision) {
+    public void setPrevision(ArrayList<PrevisionHora> prevision) {
         this.prevision = prevision;
     }
 
+
+
     @Override
     public String toString() {
-	return "PrevisionVisitas [fecha=" + fecha + ", prevision=" + prevision.toString() + "]";
+	return "PrevisionFecha [fecha=" + fecha + ", prevision=" + prevision + "]";
     }
+
+   
+    
+    
+    
+    
+    
+    
     
     
 }
