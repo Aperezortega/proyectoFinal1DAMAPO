@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import enums.Funcion;
+import enums.TipoTurno;
 
 public class Turno {
     
@@ -13,6 +14,7 @@ public class Turno {
     private LocalTime horaFin;
     private Empleado empleado;
     private Funcion funcion;
+    private TipoTurno tipoTurno;
     /**
      * @param idTurno
      * @param fechaTurno
@@ -30,6 +32,11 @@ public class Turno {
 	this.horaFin = horaFin;
 	this.empleado = empleado;
 	this.funcion = funcion;
+	  if (horaInicio.getHour() >= 10 && horaInicio.getHour() < 14) {
+	            this.tipoTurno = TipoTurno.MAÑANA;
+	        } else {
+	            this.tipoTurno = TipoTurno.TARDE;
+	        }
     }
     public Turno(String idTurno, LocalDate fechaTurno, LocalTime horaInicio, LocalTime horaFin,
 	    Funcion funcion) {
@@ -39,10 +46,16 @@ public class Turno {
 	this.horaInicio = horaInicio;
 	this.horaFin = horaFin;
 	this.funcion = funcion;
+	  if (horaInicio.getHour() >= 10 && horaInicio.getHour() < 14) {
+	            this.tipoTurno = TipoTurno.MAÑANA;
+	        } else {
+	            this.tipoTurno = TipoTurno.TARDE;
+	        }
     }
-    /**
-     * @return the idTurno
-     */
+    
+    
+    
+    
     public String getIdTurno() {
         return idTurno;
     }
@@ -113,6 +126,19 @@ public class Turno {
         this.funcion = funcion;
     }
     
+    
+    /**
+     * @return the tipoTurno
+     */
+    public TipoTurno getTipoTurno() {
+        return tipoTurno;
+    }
+    /**
+     * @param tipoTurno the tipoTurno to set
+     */
+    public void setTipoTurno(TipoTurno tipoTurno) {
+        this.tipoTurno = tipoTurno;
+    }
     @Override
     public String toString() {
         String idTurnoFormateado = String.format("%-22s", idTurno);

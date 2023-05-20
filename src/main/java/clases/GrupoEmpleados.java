@@ -12,9 +12,9 @@ public class GrupoEmpleados {
     private ArrayList<Empleado> empleados;
 
     
-    public GrupoEmpleados(GruposEmpleados nombreGrupo, ArrayList<Empleado> empleados) {
+    public GrupoEmpleados(GruposEmpleados nombreGrupo) {
         this.nombreGrupo = nombreGrupo;
-        this.empleados = empleados;
+        this.empleados = new ArrayList<Empleado>();
     }
 
     public GruposEmpleados getNombreGrupo() {
@@ -58,11 +58,12 @@ public class GrupoEmpleados {
 
     public void addEmpleado(Empleado empleado ) {
 	this.empleados.add(empleado);
+	empleado.setGrupo(this.getNombreGrupo());
     }
     
     
     @Override
-    public String toString() { 
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Grupo ").append(nombreGrupo).append(":\n");
 

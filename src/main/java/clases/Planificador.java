@@ -4,6 +4,7 @@
     import java.io.FileReader;
     import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import enums.Funcion;
+import enums.TipoTurno;
     
     public class Planificador {
         
@@ -45,9 +47,10 @@ import enums.Funcion;
     	    requerimientos= generarRequerimientos(csvFile);
     	}
     	this.prevision = prevision;
-    	this.prevision = prevision;
     	this.listaTurnos = this.generarTurnos(prevision);
         }
+        
+        
         public static ArrayList<RequerimientosEmpleados>generarRequerimientos(String csvFile) throws IOException{
     
     		String line;
@@ -129,7 +132,82 @@ import enums.Funcion;
             return turnos;
         }
             
-       
+      
+        
+        public String verEmpleadosDisponibles(String idTurno, ArrayList<Empleado> plantilla) {
+            StringBuilder nombres = new StringBuilder();
+            nombres.append("EMPLEADOS DISPONIBLES \n" +idTurno+ " : \n");
+            
+            for (Turno turno : listaTurnos) {
+                if (turno.getIdTurno().equals(idTurno)) {
+                    TipoTurno tipoTurno = turno.getTipoTurno();
+                    LocalDate fecha = turno.getFechaTurno();
+                    for (Empleado e : plantilla) {
+                        switch (tipoTurno) {
+                            case MAÑANA:
+                                if (e.isWorkinMañanas(fecha)) {
+                                    nombres.append(e.getNombre()+", "+e.getGrupo()+", "+e.getFunciones()+", +"+e.getHorasBaseContrato()).append("\n");
+                                }
+                                break;
+                            case TARDE:
+                                if (e.isWorkinTardes(fecha)) {
+                                    nombres.append(e.getNombre()+", "+e.getGrupo()+", "+e.getFunciones()+", +"+e.getHorasBaseContrato()).append("\n");
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
+            // Eliminar la coma y el espacio final si existen
+            if (nombres.length() > 0) {
+                nombres.setLength(nombres.length() - 2);
+            }
+            return nombres.toString();
+        }
+
+        
+        
+        
+        
+        
+        
+        /*
+        public ArrayList<Empleado> verEmpleadosDisponibles(String idTurno, ArrayList<Empleado> plantilla) {
+            ArrayList<Empleado> empleadosDisponibles = new ArrayList<Empleado>();
+            for (Turno turno : listaTurnos) {
+                if (turno.getIdTurno().equals(idTurno)) {
+                   TipoTurno tipoTurno = turno.getTipoTurno();
+                   LocalDate fecha =turno.getFechaTurno();
+                   for( Empleado e: plantilla) {
+                       switch (tipoTurno){
+                       
+                       	case MAÑANA:
+                       	if(e.isWorkinMañanas(fecha)) {
+                 	   empleadosDisponibles.add(e);
+                       	}
+                       	    break;
+                       
+                       case TARDE:
+                	   if(e.isWorkinTardes(fecha)) {
+                     	   empleadosDisponibles.add(e);
+                           	}
+                	   break;
+                
+                       }
+                       
+                       
+                       
+                       }
+                       
+                   }
+                   
+            
+                }
+            return empleadosDisponibles; 
+        }
+          */
+        
+        
         private byte calcularNumCajeros(int visitas) {
             Collections.sort(requerimientos, Comparator.comparing(RequerimientosEmpleados::getVisitas));
             byte numCajeros =1;
@@ -183,12 +261,6 @@ import enums.Funcion;
         }
 
         
-        
-        
-        
-        
-        
-
 	public List<Turno> getListaTurnos() {
 	    return listaTurnos;
 	}
@@ -207,9 +279,7 @@ import enums.Funcion;
 	/**
 	 * @param listaTurnos the listaTurnos to set
 	 */
-	public void setListaTurnos(List<Turno> listaTurnos) {
-	    this.listaTurnos = listaTurnos;
-	}
+	
 
 	@Override
         public String toString() {
