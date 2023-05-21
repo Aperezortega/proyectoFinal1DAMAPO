@@ -1,0 +1,17 @@
+para cambiar de pantalla hacen falta 3 operaciones
+
+1 poner la pantalla actual a invisible
+2 selecccionar la pantalla nueva 
+3 hacer visible la pantalla nueva
+
+
+
+
+public void cambiarAPantalla(class<?> clase){
+this.getContentPane().setVisible(false);
+if(clase.equals(PantallaLogin.class)){
+this.setContentPane(new PantallaLogin(this));
+}
+this.getContentPane().setVisible(true);
+}
+

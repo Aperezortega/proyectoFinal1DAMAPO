@@ -11,10 +11,18 @@ import clases.PrevisionFecha;
 import clases.RequerimientosEmpleados;
 import enums.Funcion;
 import enums.GruposEmpleados;
+import interfaces.Ventana;
 
 public class Main {
 
     public static void main(String[] args) {
+	try {
+	    Ventana v = new Ventana();
+	} catch (IOException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+	/*
 	PrevisionFecha p=null;
 	ArrayList<Empleado> plantilla =new ArrayList<Empleado>();
 	try {
@@ -113,6 +121,7 @@ public class Main {
 	C.addEmpleado(empleado19);
 	C.addEmpleado(empleado20);
 	System.out.println(pl.verEmpleadosDisponibles("2023-05-20Caja1", plantilla).toString());
+    */
     }
 
 }
