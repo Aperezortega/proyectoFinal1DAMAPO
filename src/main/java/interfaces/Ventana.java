@@ -23,6 +23,28 @@ public class Ventana extends JFrame{
 	if(clase.equals(PantallaMenu.class)) {
 	    this.setContentPane(new PantallaMenu(this, (PantallaLogin) this.getContentPane()));
 	}
+	if(clase.equals(PantallaVerEmpleados.class)) {
+	    this.setContentPane(new PantallaVerEmpleados(this));
+	}
+	if(clase.equals(PantallaAltaEmpleado.class)) {
+	    this.setContentPane(new PantallaAltaEmpleado(this));
+	}
+	if(clase.equals(PantallaCargarPrevision.class)) {
+	    this.setContentPane(new PantallaCargarPrevision(this));
+	}
+	if(clase.equals(PantallaRequisitosEmpleado.class)) {
+	    this.setContentPane(new PantallaRequisitosEmpleado(this));
+	}
+	if(clase.equals(PantallaTurnos.class)) {
+	    this.setContentPane(new PantallaTurnos(this));
+	}
+	if(clase.equals(PantallaTAndA.class)) {
+	    this.setContentPane(new PantallaTAndA(this));
+	}
+	if(clase.equals(PantallaInformes.class)) {
+	    this.setContentPane(new PantallaInformes(this));
+	}
+	
 	this.getContentPane().setVisible(true);
     }  
     
