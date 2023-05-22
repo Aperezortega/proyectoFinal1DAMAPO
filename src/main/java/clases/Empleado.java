@@ -17,6 +17,8 @@ public class Empleado {
     private Float horasBaseContrato;
     private EnumSet<Funcion> funciones;
     private GruposEmpleados grupo;
+    private String usuario;
+    private String contraseña;
   
     /**
      * @param idEmpleado

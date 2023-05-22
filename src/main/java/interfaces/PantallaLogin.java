@@ -19,6 +19,11 @@ import java.awt.Font;
 import javax.swing.JTextArea;
 import javax.swing.JFormattedTextField;
 import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JList;
+import javax.swing.AbstractListModel;
+import javax.swing.ListSelectionModel;
 
 public class PantallaLogin extends JPanel {
     private Ventana ventana; // esto es para tener una referencia facil para cambiar de ventana
@@ -28,44 +33,65 @@ public class PantallaLogin extends JPanel {
 	public PantallaLogin(Ventana v) throws IOException {
 	    this.ventana=v;
 		setLayout(null);
-		this.setPreferredSize(new Dimension(400, 400));
+		this.setPreferredSize(new Dimension(600, 600));
 		txtPassword = new JTextField();
 		txtPassword.setToolTipText("ID Empleado");
-		txtPassword.setBounds(154, 225, 86, 20);
+		txtPassword.setBounds(248, 295, 100, 20);
 		add(txtPassword);
 		txtPassword.setColumns(10);
 		txtIdEmpleado = new JTextField();
 		txtIdEmpleado.setHorizontalAlignment(SwingConstants.LEFT);
 		txtIdEmpleado.setToolTipText("");
-		txtIdEmpleado.setBounds(154, 180, 86, 20);
+		txtIdEmpleado.setBounds(248, 250, 100, 20);
 		add(txtIdEmpleado);
 		txtIdEmpleado.setColumns(10);
 		
 		JButton btnNewButton = new JButton("Log in");
+		btnNewButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			    try {
+				ventana.cambiarAPantalla(PantallaMenu.class);
+			    } catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			    }
+			}
+		});
 		btnNewButton.setForeground(new Color(0, 0, 0));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		btnNewButton.setBounds(154, 267, 89, 23);
+		btnNewButton.setBounds(248, 371, 100, 23);
 		add(btnNewButton);
 		
 		JLabel lblNewLabel = new JLabel("Password");
 		lblNewLabel.setForeground(new Color(255, 255, 255));
-		lblNewLabel.setBounds(154, 211, 86, 14);
+		lblNewLabel.setBounds(248, 281, 86, 14);
 		add(lblNewLabel);
 		
 		JLabel lblNewLabel_1 = new JLabel("ID Empleado");
 		lblNewLabel_1.setForeground(new Color(255, 255, 255));
-		lblNewLabel_1.setBounds(154, 166, 86, 14);
+		lblNewLabel_1.setBounds(248, 236, 86, 14);
 		add(lblNewLabel_1);
 		
 		JLabel lblNewLabel_2 = new JLabel("EasyPlanner");
 		lblNewLabel_2.setForeground(new Color(255, 255, 255));
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_2.setFont(new Font("Verdana", Font.BOLD, 20));
-		lblNewLabel_2.setBounds(102, 66, 177, 51);
+		lblNewLabel_2.setBounds(213, 136, 177, 51);
 		add(lblNewLabel_2);
+		
+		JButton btnNewButton_1 = new JButton("Check in");
+		btnNewButton_1.setBounds(138, 371, 100, 23);
+		add(btnNewButton_1);
+		
+		JButton btnNewButton_2 = new JButton("Check out");
+		btnNewButton_2.setBounds(358, 371, 100, 23);
+		add(btnNewButton_2);
+		
+		
 	
 		// Load the background image
 	       
@@ -82,6 +108,34 @@ public class PantallaLogin extends JPanel {
 	            Image scaledImage = backgroundImage.getScaledInstance(this.getWidth(), this.getHeight(), Image.SCALE_SMOOTH);
 	            g.drawImage(scaledImage, 0, 0, this);
 	        }
+	    }
+
+	    /**
+	     * @return the txtPassword
+	     */
+	    public JTextField getTxtPassword() {
+	        return txtPassword;
+	    }
+
+	    /**
+	     * @param txtPassword the txtPassword to set
+	     */
+	    public void setTxtPassword(JTextField txtPassword) {
+	        this.txtPassword = txtPassword;
+	    }
+
+	    /**
+	     * @return the txtIdEmpleado
+	     */
+	    public JTextField getTxtIdEmpleado() {
+	        return txtIdEmpleado;
+	    }
+
+	    /**
+	     * @param txtIdEmpleado the txtIdEmpleado to set
+	     */
+	    public void setTxtIdEmpleado(JTextField txtIdEmpleado) {
+	        this.txtIdEmpleado = txtIdEmpleado;
 	    }
 	}
 
