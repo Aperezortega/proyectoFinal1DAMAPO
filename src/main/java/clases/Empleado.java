@@ -1,5 +1,6 @@
 package clases;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -9,16 +10,18 @@ import java.util.EnumSet;
 
 import enums.Funcion;
 import enums.GruposEmpleados;
+import utils.DAO;
 
 public class Empleado {
     
     private String idEmpleado;
+    private String apellidos;
     private String nombre;
-    private Float horasBaseContrato;
-    private EnumSet<Funcion> funciones;
-    private GruposEmpleados grupo;
-    private String usuario;
+    private String email;
     private String contraseña;
+    private GruposEmpleados grupo;
+    private Float coeficienteParcialidad;
+    private EnumSet<Funcion> funciones;
   
     /**
      * @param idEmpleado
@@ -28,21 +31,29 @@ public class Empleado {
      * @param horasBaseContrato
      * @param funciones
      */
-    public Empleado(String idEmpleado, String nombre, Float horasBaseContrato, Funcion...funciones ) {
+    public Empleado(String idEmpleado, String apellidos, String nombre, String email, String contraseña, GruposEmpleados grupo, Float coeficienteParcialidad, Funcion...funciones) throws SQLException{
 	super();
 	this.idEmpleado = idEmpleado;
+	this.apellidos = apellidos;
 	this.nombre = nombre;
-	this.horasBaseContrato = horasBaseContrato;
-	this.grupo = null;
+	this.email = email;
+	this.contraseña = contraseña;
+	this.grupo =grupo;
+	this.coeficienteParcialidad = coeficienteParcialidad;
 	this.funciones = EnumSet.noneOf(Funcion.class);
 	for (Funcion funcion : funciones) {
             this.funciones.add(funcion);
         }
+	DAO.insert("insert into empleados  (`ID Empleado`, `Apellidos`, `Nombre`, `Email`, `Contraseña`, `Grupo_Empleados`, `Coeficiente_Parcialidad`, `Funcion: Caja`, `Funcion: Almacen`, `Funcion: Atencion_Publico`, `Funcion: Supervisor`, `Usuario:`, `Operacion`)" 
+		+ " values('" + idEmpleado + "','" + apellidos + "','" + nombre + "','" + email+"','" + contraseña +"','" + grupo +"','" + coeficienteParcialidad +"','" + tieneFuncion(Funcion.CAJA)+ "','" +tieneFuncion(Funcion.ALMACEN)+"','" +tieneFuncion(Funcion.ATTPUBLICO)+"','" +tieneFuncion(Funcion.SUPERVISOR)+"','"+"user"+"','"+"Alta"+"')");                        
     }
     
-    public boolean tieneFuncion(Funcion funcion) {
-	return funciones.contains(funcion);
-	
+    public byte tieneFuncion(Funcion funcion) {
+	if(funciones.contains(funcion)) {
+	    return 1;
+	}else {
+	return 0;
+	}
     }
     
     public void añadirfuncion(Funcion funcion) {
@@ -165,14 +176,14 @@ public class Empleado {
      * @return the horasBaseContrato
      */
     public Float getHorasBaseContrato() {
-        return horasBaseContrato;
+        return coeficienteParcialidad;
     }
 
     /**
      * @param horasBaseContrato the horasBaseContrato to set
      */
     public void setHorasBaseContrato(Float horasBaseContrato) {
-        this.horasBaseContrato = horasBaseContrato;
+        this.coeficienteParcialidad = horasBaseContrato;
     }
 
     /**
