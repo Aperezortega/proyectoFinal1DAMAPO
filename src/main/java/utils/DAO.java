@@ -48,7 +48,7 @@ public abstract class DAO {
     }
 
     
-    private static void disconnect(Statement smt) {
+    public static void disconnect(Statement smt) {
 	try {
 	    smt.close();
 	    connection.close();
@@ -105,5 +105,5 @@ public abstract class DAO {
 	    return ret;
 	}
     
-    
+   
 }

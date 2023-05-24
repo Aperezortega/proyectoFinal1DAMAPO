@@ -21,7 +21,7 @@ public class PantallaMenu extends JPanel{
     private Ventana ventana;
     private PantallaLogin pantallaLogin;
     public PantallaMenu(Ventana v, PantallaLogin pantallalogin) {
-	this.setPreferredSize(new Dimension(600, 600));
+	this.setPreferredSize(new Dimension(800, 600));
 	setLayout(null);
 	
 	JMenuBar menuBar = new JMenuBar();

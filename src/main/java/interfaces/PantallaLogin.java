@@ -33,7 +33,7 @@ public class PantallaLogin extends JPanel {
 	public PantallaLogin(Ventana v) throws IOException {
 	    this.ventana=v;
 		setLayout(null);
-		this.setPreferredSize(new Dimension(600, 600));
+		this.setPreferredSize(new Dimension(800, 600));
 		txtPassword = new JTextField();
 		txtPassword.setToolTipText("ID Empleado");
 		txtPassword.setBounds(248, 295, 100, 20);

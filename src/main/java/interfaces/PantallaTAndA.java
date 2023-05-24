@@ -17,7 +17,7 @@ public class PantallaTAndA  extends JPanel{
     
     private Ventana ventana;
     public PantallaTAndA(Ventana v) {
-	this.setPreferredSize(new Dimension(600, 600));
+	this.setPreferredSize(new Dimension(800, 600));
 	setLayout(null);
 	
 	JMenuBar menuBar = new JMenuBar();

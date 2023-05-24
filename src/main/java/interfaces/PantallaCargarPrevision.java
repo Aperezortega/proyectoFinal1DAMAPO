@@ -18,7 +18,7 @@ public class PantallaCargarPrevision extends JPanel {
     private Ventana ventana;
     
     public PantallaCargarPrevision(Ventana v) {
-	this.setPreferredSize(new Dimension(600, 600));
+	this.setPreferredSize(new Dimension(800, 600));
 	setLayout(null);
 	
 	JMenuBar menuBar = new JMenuBar();

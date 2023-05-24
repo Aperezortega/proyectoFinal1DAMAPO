@@ -4,9 +4,11 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.List;
 
 import enums.Funcion;
 import enums.GruposEmpleados;
@@ -30,7 +32,40 @@ public class Empleado {
      * @param horasVacaciones
      * @param horasBaseContrato
      * @param funciones
+     * @throws SQLException 
      */
+    public Empleado(String idEmpleado) throws SQLException {
+	ArrayList<String>consulta = DAO.selectAndPrint("select * from empleados where `ID Empleado` ='"+idEmpleado +"'");
+	this.idEmpleado=consulta.get(1);
+	this.apellidos=consulta.get(2);
+	this.nombre=consulta.get(3);
+	this.email=consulta.get(4);
+	this.contraseña=consulta.get(5);
+	this.grupo=GruposEmpleados.valueOf(consulta.get(6));
+	this.coeficienteParcialidad=Float.parseFloat(consulta.get(7));
+	Byte skill1=Byte.parseByte(consulta.get(8));
+	Byte skill2=Byte.parseByte(consulta.get(9));
+	Byte skill3=Byte.parseByte(consulta.get(10));
+	Byte skill4=Byte.parseByte(consulta.get(11));
+	  List<Funcion> funcionesList = new ArrayList<Funcion>();
+             if (skill1==1) {
+                 funcionesList.add(Funcion.CAJA);
+             }
+             if (skill2==1) {
+                 funcionesList.add(Funcion.ALMACEN);
+             }
+             if (skill3==1) {
+                 funcionesList.add(Funcion.ATTPUBLICO);
+             }
+             if (skill1==4) {
+                 funcionesList.add(Funcion.SUPERVISOR);
+             }
+
+             // Convertir la lista a un array.
+             
+	this.funciones=EnumSet.copyOf(funcionesList);
+    
+    }
     public Empleado(String idEmpleado, String apellidos, String nombre, String email, String contraseña, GruposEmpleados grupo, Float coeficienteParcialidad, Funcion...funciones) throws SQLException{
 	super();
 	this.idEmpleado = idEmpleado;
@@ -53,6 +88,21 @@ public class Empleado {
 	    return 1;
 	}else {
 	return 0;
+	}
+    }
+    public boolean tieneFuncionBoolean(Funcion funcion) {
+   	if(funciones.contains(funcion)) {
+   	    return true;
+   	}else {
+   	return false;
+   	}
+       }
+    
+    public boolean perteneceAGrupo(GruposEmpleados grupoEmpleado) {
+	if(this.getGrupo().equals(grupoEmpleado)) {
+	    return true;
+	}else {
+	return false;
 	}
     }
     
@@ -147,8 +197,68 @@ public class Empleado {
     /**
      * @return the idEmpleado
      */
+    
+    
+    
+    
     public String getIdEmpleado() {
         return idEmpleado;
+    }
+
+    /**
+     * @return the apellidos
+     */
+    public String getApellidos() {
+        return apellidos;
+    }
+
+    /**
+     * @param apellidos the apellidos to set
+     */
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
+    }
+
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * @return the contraseña
+     */
+    public String getContraseña() {
+        return contraseña;
+    }
+
+    /**
+     * @param contraseña the contraseña to set
+     */
+    public void setContraseña(String contraseña) {
+        this.contraseña = contraseña;
+    }
+
+    /**
+     * @return the coeficienteParcialidad
+     */
+    public Float getCoeficienteParcialidad() {
+        return coeficienteParcialidad;
+    }
+
+    /**
+     * @param coeficienteParcialidad the coeficienteParcialidad to set
+     */
+    public void setCoeficienteParcialidad(Float coeficienteParcialidad) {
+        this.coeficienteParcialidad = coeficienteParcialidad;
     }
 
     /**
@@ -176,15 +286,14 @@ public class Empleado {
      * @return the horasBaseContrato
      */
     public Float getHorasBaseContrato() {
-        return coeficienteParcialidad;
+        Float horasBase =(40*coeficienteParcialidad);
+	return horasBase;
     }
 
     /**
      * @param horasBaseContrato the horasBaseContrato to set
      */
-    public void setHorasBaseContrato(Float horasBaseContrato) {
-        this.coeficienteParcialidad = horasBaseContrato;
-    }
+    
 
     /**
      * @return the funciones
