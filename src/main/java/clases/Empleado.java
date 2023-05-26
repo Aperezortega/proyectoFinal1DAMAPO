@@ -12,6 +12,8 @@ import java.util.List;
 
 import enums.Funcion;
 import enums.GruposEmpleados;
+import exceptions.ContraseñaInvalidaExcepcion;
+import exceptions.UsuarioNoExisteExcepcion;
 import utils.DAO;
 
 public class Empleado {
@@ -82,6 +84,45 @@ public class Empleado {
 	DAO.insert("insert into empleados  (`ID Empleado`, `Apellidos`, `Nombre`, `Email`, `Contraseña`, `Grupo_Empleados`, `Coeficiente_Parcialidad`, `Funcion: Caja`, `Funcion: Almacen`, `Funcion: Atencion_Publico`, `Funcion: Supervisor`, `Usuario:`, `Operacion`)" 
 		+ " values('" + idEmpleado + "','" + apellidos + "','" + nombre + "','" + email+"','" + contraseña +"','" + grupo +"','" + coeficienteParcialidad +"','" + tieneFuncion(Funcion.CAJA)+ "','" +tieneFuncion(Funcion.ALMACEN)+"','" +tieneFuncion(Funcion.ATTPUBLICO)+"','" +tieneFuncion(Funcion.SUPERVISOR)+"','"+"user"+"','"+"Alta"+"')");                        
     }
+    
+    public Empleado(String email, String pass) throws SQLException, UsuarioNoExisteExcepcion, ContraseñaInvalidaExcepcion {
+   	super();
+   	ArrayList<String>consulta = DAO.select("select * from empleados where email ='"+email +"'");
+   	
+   	if(consulta.isEmpty()) {
+   	    throw new UsuarioNoExisteExcepcion("No existe el usuario con el email "+email);
+   	}else if(!(consulta.get(5).equals(pass))) {
+   	    throw new ContraseñaInvalidaExcepcion("La contraseña "+pass+ " no es valida");
+   	}
+   	this.idEmpleado=consulta.get(1);
+   	this.apellidos=consulta.get(2);
+   	this.nombre=consulta.get(3);
+   	this.email = consulta.get(4);
+   	this.grupo =GruposEmpleados.valueOf(consulta.get(6));
+   	this.coeficienteParcialidad=Float.parseFloat(consulta.get(7));
+   	Byte skill1=Byte.parseByte(consulta.get(8));
+	Byte skill2=Byte.parseByte(consulta.get(9));
+	Byte skill3=Byte.parseByte(consulta.get(10));
+	Byte skill4=Byte.parseByte(consulta.get(11));
+	  List<Funcion> funcionesList = new ArrayList<Funcion>();
+             if (skill1==1) {
+                 funcionesList.add(Funcion.CAJA);
+             }
+             if (skill2==1) {
+                 funcionesList.add(Funcion.ALMACEN);
+             }
+             if (skill3==1) {
+                 funcionesList.add(Funcion.ATTPUBLICO);
+             }
+             if (skill1==1) {
+                 funcionesList.add(Funcion.SUPERVISOR);
+             }
+
+             // Convertir la lista a un array.
+             
+	this.funciones=EnumSet.copyOf(funcionesList);
+   	
+       }
     
     public byte tieneFuncion(Funcion funcion) {
 	if(funciones.contains(funcion)) {

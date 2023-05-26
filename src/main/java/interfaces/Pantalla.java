@@ -2,6 +2,10 @@ package interfaces;
 
     import javax.swing.JPanel;
 
+import clases.Empleado;
+import enums.Funcion;
+import utils.Session;
+
 import java.awt.BorderLayout;
 
 import javax.swing.JMenuBar;
@@ -11,7 +15,11 @@ import javax.swing.JMenuBar;
         protected Ventana ventana;
         public Pantalla(Ventana v) {
             this.ventana = v;
-            menuBar = new MenuBar(ventana);
+            Empleado empleadoActual = Session.getInstance().getEmpleadoActual();
+            if(!(this instanceof PantallaLogin)) {
+        	menuBar = new MenuBar(ventana);
+            }
+            
             
         }
         
