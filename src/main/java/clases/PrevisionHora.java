@@ -11,7 +11,7 @@ import java.time.LocalTime;
 
 public class PrevisionHora {
     private LocalTime hora;
-    private int prevision;
+    private int visitas;
     
     
     
@@ -22,7 +22,7 @@ public class PrevisionHora {
     public PrevisionHora(LocalTime hora, int prevision) {
 	super();
 	this.hora = hora;
-	this.prevision = prevision;
+	this.visitas = prevision;
     }
     /**
      * @return the hora
@@ -39,18 +39,18 @@ public class PrevisionHora {
     /**
      * @return the prevision
      */
-    public int getPrevision() {
-        return prevision;
+    public int getVisitas() {
+        return visitas;
     }
     /**
      * @param prevision the prevision to set
      */
-    public void setPrevision(int prevision) {
-        this.prevision = prevision;
+    public void setVisitas(int prevision) {
+        this.visitas = prevision;
     }
     @Override
     public String toString() {
-	return "Prevision" + hora + ": "  + prevision ;
+	return "Prevision" + hora + ": "  + visitas;
     }
     
     

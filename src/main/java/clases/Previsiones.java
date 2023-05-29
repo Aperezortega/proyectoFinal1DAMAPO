@@ -2,7 +2,8 @@ package clases;
 
 
 
-    import java.time.LocalDate;
+    import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
@@ -12,7 +13,7 @@ import java.util.SortedMap;
 	private ArrayList<PrevisionHora> prevision = new ArrayList<PrevisionHora>();
         private SortedMap<LocalDate, PrevisionFecha> previsiones;
 
-        public Previsiones(LocalDate inicio, LocalDate fin) {
+        public Previsiones(LocalDate inicio, LocalDate fin) throws SQLException {
             this.previsiones = new TreeMap<>();
 
             // Rellena el mapa con fechas desde 'inicio' hasta 'fin', con un objeto vacío de PrevisionFecha

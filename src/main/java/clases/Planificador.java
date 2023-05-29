@@ -83,7 +83,7 @@ import enums.TipoTurno;
             byte countAttPublico = 0;
             // Asume que el supermercado abre a las 10:00
             for(PrevisionHora prevision : previsiones.getPrevision()) {
-        	Integer visitas = prevision.getPrevision();
+        	Integer visitas = prevision.getVisitas();
         	LocalTime horaInicio = prevision.getHora();
         	
         	//para calcular cajeros
@@ -302,7 +302,7 @@ import enums.TipoTurno;
                 // Obtén los requisitos de empleados para la previsión actual
                 RequerimientosEmpleados reqPrev = null;
                 for (RequerimientosEmpleados req : requerimientos) {
-                    if (req.getVisitas() <= prevision.getPrevision()) {
+                    if (req.getVisitas() <= prevision.getVisitas()) {
                         reqPrev = req;
                     } else {
                         break;

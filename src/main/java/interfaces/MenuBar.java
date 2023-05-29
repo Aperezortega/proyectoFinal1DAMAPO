@@ -71,17 +71,31 @@ public class MenuBar extends JMenuBar{
 		JMenu mnNewMenu_1 = new JMenu("Planning");
 		this.add(mnNewMenu_1);
 		
-		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Cargar Prevision");
-		mntmNewMenuItem_2.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        try {
-		            v.cambiarAPantalla(PantallaCargarPrevision.class);
-		        } catch (IOException e1) {
-		            e1.printStackTrace();
-		        }
-		    }
-		});
-		mnNewMenu_1.add(mntmNewMenuItem_2);
+		
+
+		        JMenuItem mntmNewMenuItem_cargar = new JMenuItem("Cargar Prevision");
+		        mntmNewMenuItem_cargar.addActionListener(new ActionListener() {
+		            public void actionPerformed(ActionEvent e) {
+		                try {
+		                    v.cambiarAPantalla(PantallaCargarPrevision.class);
+		                } catch (IOException e1) {
+		                    e1.printStackTrace();
+		                }
+		            }
+		        });
+		        mnNewMenu_1.add(mntmNewMenuItem_cargar);
+
+		        JMenuItem mntmNewMenuItem_ver = new JMenuItem("Ver Prevision");
+		        mntmNewMenuItem_ver.addActionListener(new ActionListener() {
+		            public void actionPerformed(ActionEvent e) {
+		                try {
+		                    v.cambiarAPantalla(PantallaVerPrevision.class);
+		                } catch (IOException e1) {
+		                    e1.printStackTrace();
+		                }
+		            }
+		        });
+		        mnNewMenu_1.add(mntmNewMenuItem_ver);
 		
 		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Requisitos");
 		mntmNewMenuItem_3.addActionListener(new ActionListener() {

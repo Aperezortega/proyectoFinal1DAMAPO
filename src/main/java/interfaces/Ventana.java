@@ -182,6 +182,10 @@ public class Ventana extends JFrame{
 	if(clase.equals(PantallaCargarPrevision.class)) {
 	    this.setContentPane(new PantallaCargarPrevision(this));
 	}
+	if(clase.equals(PantallaVerPrevision.class)) {
+	    this.setContentPane(new PantallaVerPrevision(this));
+	}
+	
 	if(clase.equals(PantallaRequisitosEmpleado.class)) {
 	    this.setContentPane(new PantallaRequisitosEmpleado(this));
 	}
@@ -227,6 +231,10 @@ public class Ventana extends JFrame{
    	if(clase.equals(PantallaCargarPrevision.class)) {
    	    this.setContentPane(new PantallaCargarPrevision(this));
    	}
+   	if(clase.equals(PantallaVerPrevision.class)) {
+	    this.setContentPane(new PantallaVerPrevision(this));
+	}
+   	
    	if(clase.equals(PantallaRequisitosEmpleado.class)) {
    	    this.setContentPane(new PantallaRequisitosEmpleado(this));
    	}

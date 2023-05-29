@@ -5,9 +5,17 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.mysql.cj.jdbc.result.ResultSetMetaData;
+
+import clases.PrevisionFecha;
+import clases.PrevisionHora;
 
 
 /* si no se pone static no da error
@@ -105,5 +113,33 @@ public abstract class DAO {
 	    return ret;
 	}
     
-   
+    public static List<PrevisionFecha> selectPrevision(String query) throws SQLException {
+	    Statement querier = connect();
+	    ResultSet resultSet = querier.executeQuery(query);
+	    Map<LocalDate, PrevisionFecha> map = new HashMap<>();
+
+	    try {
+	        while (resultSet.next()) {
+	            LocalDate fecha = resultSet.getObject("fecha", LocalDate.class);
+	            LocalTime hora = resultSet.getObject("hora", LocalTime.class);
+	            int visitas = resultSet.getInt("visitas");
+	            
+	            PrevisionFecha previsionFecha = map.get(fecha);
+	            if (previsionFecha == null) {
+	                previsionFecha = new PrevisionFecha();
+	                previsionFecha.setFecha(fecha);
+	                previsionFecha.setPrevision(new ArrayList<>());
+	                map.put(fecha, previsionFecha);
+	            }
+
+	            PrevisionHora previsionHora = new PrevisionHora(hora, visitas);
+	            previsionFecha.getPrevision().add(previsionHora);
+	        }
+	    } finally {
+	        disconnect(querier);
+	    }
+
+	    return new ArrayList<>(map.values());
+	}
+
 }

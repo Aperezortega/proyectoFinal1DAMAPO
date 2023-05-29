@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -91,7 +92,10 @@ public class PantallaCargarPrevision extends Pantalla {
                     } catch (IOException ex) {
                         ex.printStackTrace();
                         JOptionPane.showMessageDialog(null, "Error al leer el archivo Excel", "Error", JOptionPane.ERROR_MESSAGE);
-                    }  
+                    } catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		    }  
         	    
         	}
         });

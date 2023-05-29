@@ -8,6 +8,7 @@ import clases.PrevisionHora;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -19,7 +20,7 @@ public class ExcelReader {
     private ArrayList<PrevisionFecha> previsiones;
     
     
-    public void readExcelFile(String filePath)throws IOException {
+    public void readExcelFile(String filePath)throws IOException, SQLException {
 	       
         FileInputStream file = new FileInputStream(filePath);
         Workbook workbook = new XSSFWorkbook(file);
@@ -79,7 +80,7 @@ public class ExcelReader {
 	}
 
     
-    private PrevisionFecha createPrevisionFecha(Sheet sheet) {
+    private PrevisionFecha createPrevisionFecha(Sheet sheet) throws SQLException {
         LocalDate fecha = parseFechaFromSheetName(sheet.getSheetName());
         ArrayList<PrevisionHora> previsionHoras = new ArrayList<>();
 
