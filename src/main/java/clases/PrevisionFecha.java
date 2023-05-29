@@ -15,7 +15,11 @@ public class PrevisionFecha {
     private ArrayList<PrevisionHora> prevision;
     
     
-    
+    public PrevisionFecha(LocalDate fecha, ArrayList<PrevisionHora> prevision) {
+	this.fecha =fecha;
+	this.prevision=prevision;
+    }
+    /*
     public PrevisionFecha(String csvFile, LocalDate fecha) throws IOException {
         this.fecha = fecha;
         this.prevision=new ArrayList<PrevisionHora>();
@@ -39,7 +43,7 @@ public class PrevisionFecha {
         
     }
 
-
+*/
 
     /**
      * @return the fecha

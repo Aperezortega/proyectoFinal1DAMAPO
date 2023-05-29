@@ -22,7 +22,7 @@ public class MenuBar extends JMenuBar{
     
     public MenuBar(Ventana v) {
 	
-	if(empleadoActual.tieneFuncionBoolean(Funcion.SUPERVISOR)) {
+	if(empleadoActual !=null && empleadoActual.tieneFuncionBoolean(Funcion.SUPERVISOR)) {
 	  
 	    this.ventana=v;
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));

@@ -12,16 +12,24 @@ import clases.RequerimientosEmpleados;
 import enums.Funcion;
 import enums.GruposEmpleados;
 import interfaces.Ventana;
+import utils.ExcelReader;
 
 public class Main {
 
     public static void main(String[] args) {
+	/*
+	ExcelReader excelReader = new ExcelReader();
+        excelReader.readExcelFile("prevision.xlsx");
+	*/
+	
+	
 	try {
 	    Ventana v = new Ventana();
 	} catch (IOException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
+	
 	/*
 	PrevisionFecha p=null;
 	ArrayList<Empleado> plantilla =new ArrayList<Empleado>();
