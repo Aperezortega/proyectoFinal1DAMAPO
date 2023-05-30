@@ -129,6 +129,7 @@ public class Ventana extends JFrame{
 package interfaces;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -143,7 +144,7 @@ public class Ventana extends JFrame{
     Deque<Class<?>> screenHistory = new ArrayDeque<>();
 
     public Ventana() throws IOException {
-	this.setSize(800,600);
+	this.setSize(1200,1000);
 	this.setTitle("EasyPlanner");
 	this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	this.setLocationRelativeTo(null);
@@ -152,7 +153,7 @@ public class Ventana extends JFrame{
   
     }
 
-    public void cambiarAPantalla(Class<?> clase) throws IOException {
+    public void cambiarAPantalla(Class<?> clase) throws IOException, SQLException {
 	Class<?> pantallaActual = this.getContentPane().getClass();
 
         if(clase.equals(PantallaMenu.class)) {
@@ -206,7 +207,7 @@ public class Ventana extends JFrame{
 	    
     
   
-    public void cambiarAPantalla(Class<?> clase,Empleado empleado) throws IOException {
+    public void cambiarAPantalla(Class<?> clase,Empleado empleado) throws IOException, SQLException {
 	Class<?> pantallaActual = this.getContentPane().getClass();
 	
    	this.getContentPane().setVisible(false);
@@ -252,7 +253,7 @@ public class Ventana extends JFrame{
    	
     }
    	
-    public void navegarAtras() throws IOException {
+    public void navegarAtras() throws IOException, SQLException {
         if (!screenHistory.isEmpty()) {
             Class<?> previousScreen = screenHistory.pop();
             cambiarAPantalla(previousScreen);

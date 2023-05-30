@@ -37,7 +37,7 @@ public class Empleado {
      * @throws SQLException 
      */
     public Empleado(String idEmpleado) throws SQLException {
-	ArrayList<String>consulta = DAO.selectAndPrint("select fecha,hora,visitas from empleados where `ID Empleado` ='"+idEmpleado +"'");
+	ArrayList<String>consulta = DAO.selectAndPrint("select * from empleados where `ID Empleado` ='"+idEmpleado +"'");
 	this.idEmpleado=consulta.get(1);
 	this.apellidos=consulta.get(2);
 	this.nombre=consulta.get(3);

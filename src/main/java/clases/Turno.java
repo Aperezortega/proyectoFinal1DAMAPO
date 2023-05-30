@@ -144,9 +144,9 @@ public class Turno {
         String idTurnoFormateado = String.format("%-22s", idTurno);
         
         if(this.empleado==null) {
-            return idTurnoFormateado + ", horaInicio=" + horaInicio + ", horaFin="+ horaFin ;   
+            return idTurnoFormateado + ","+ horaInicio + "- "+ horaFin ;   
         } else {
-            return idTurnoFormateado + empleado.getNombre() + ", horaInicio=" + horaInicio + ", horaFin="+ horaFin ; 
+            return idTurnoFormateado + empleado.getNombre() + "-" + horaInicio + "-"+ horaFin ; 
         }
     }
 

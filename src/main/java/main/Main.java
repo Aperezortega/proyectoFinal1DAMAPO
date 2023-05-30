@@ -22,7 +22,7 @@ public class Main {
         excelReader.readExcelFile("prevision.xlsx");
 	*/
 	
-	
+
 	try {
 	    Ventana v = new Ventana();
 	} catch (IOException e) {
@@ -39,7 +39,7 @@ public class Main {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
-	ArrayList<RequerimientosEmpleados> requerimientos= new  ArrayList<RequerimientosEmpleados>();
+	ArrayList<RequerimientosEmpleados> requerimientos= new  ArrayList<RequerimientosEmpleados.>();
 	
 	try {
 	   requerimientos =  Planificador.generarRequerimientos("requisitos.csv");

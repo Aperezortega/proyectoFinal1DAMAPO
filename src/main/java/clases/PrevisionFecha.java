@@ -22,6 +22,38 @@ public class PrevisionFecha {
         // default constructor
     }
     
+    public PrevisionFecha(LocalDate fecha) throws SQLException {
+	    ArrayList<String> resultado = DAO.selectAndPrint("select * from previsiones where fecha ='" + fecha + "'");
+	    prevision = new ArrayList<>();
+
+	    for (int i = 0; i < resultado.size(); i += 5) {
+	        String fechaString = resultado.get(i + 1);
+	        String horaString = resultado.get(i + 2);
+	        String visitasString = resultado.get(i + 3);
+
+	        LocalDate fechaPrevision = LocalDate.parse(fechaString);
+	        LocalTime hora = LocalTime.parse(horaString);
+	        int visitas = Integer.parseInt(visitasString);
+
+	        PrevisionHora previsionHora = new PrevisionHora(hora, visitas);
+	        prevision.add(previsionHora);
+	        this.fecha = fechaPrevision;
+	        this.prevision = prevision;
+	    }
+	}
+
+
+	
+    
+
+    public PrevisionFecha(LocalDate fecha, ArrayList<PrevisionHora> prevision, boolean no) {
+	this.fecha =fecha;
+	this.prevision=prevision;
+    }
+	
+	
+	
+    
     public PrevisionFecha(LocalDate fecha, ArrayList<PrevisionHora> prevision) throws SQLException {
 	this.fecha =fecha;
 	this.prevision=prevision;

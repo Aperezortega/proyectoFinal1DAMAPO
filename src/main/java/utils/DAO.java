@@ -112,7 +112,7 @@ public abstract class DAO {
 	    }
 	    return ret;
 	}
-    
+
     public static List<PrevisionFecha> selectPrevision(String query) throws SQLException {
 	    Statement querier = connect();
 	    ResultSet resultSet = querier.executeQuery(query);

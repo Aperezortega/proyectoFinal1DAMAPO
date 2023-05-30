@@ -3,6 +3,7 @@ package interfaces;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -33,7 +34,12 @@ public class MenuBar extends JMenuBar{
 		btnAtras.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 			try {
-			    ventana.navegarAtras();
+			    try {
+				ventana.navegarAtras();
+			    } catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			    }
 			} catch (IOException e1) {
 			    e1.printStackTrace();
 			}
@@ -50,7 +56,10 @@ public class MenuBar extends JMenuBar{
 		            v.cambiarAPantalla(PantallaAltaEmpleado.class);
 		        } catch (IOException e1) {
 		            e1.printStackTrace();
-		        }
+		        } catch (SQLException e1) {
+			    // TODO Auto-generated catch block
+			    e1.printStackTrace();
+			}
 		    }
 		});
 		mnNewMenu.add(mntmNewMenuItem);
@@ -62,7 +71,10 @@ public class MenuBar extends JMenuBar{
 		            v.cambiarAPantalla(PantallaVerEmpleados.class);
 		        } catch (IOException e1) {
 		            e1.printStackTrace();
-		        }
+		        } catch (SQLException e1) {
+			    // TODO Auto-generated catch block
+			    e1.printStackTrace();
+			}
 		    }
 		});
 
@@ -80,7 +92,10 @@ public class MenuBar extends JMenuBar{
 		                    v.cambiarAPantalla(PantallaCargarPrevision.class);
 		                } catch (IOException e1) {
 		                    e1.printStackTrace();
-		                }
+		                } catch (SQLException e1) {
+				    // TODO Auto-generated catch block
+				    e1.printStackTrace();
+				}
 		            }
 		        });
 		        mnNewMenu_1.add(mntmNewMenuItem_cargar);
@@ -92,7 +107,10 @@ public class MenuBar extends JMenuBar{
 		                    v.cambiarAPantalla(PantallaVerPrevision.class);
 		                } catch (IOException e1) {
 		                    e1.printStackTrace();
-		                }
+		                } catch (SQLException e1) {
+				    // TODO Auto-generated catch block
+				    e1.printStackTrace();
+				}
 		            }
 		        });
 		        mnNewMenu_1.add(mntmNewMenuItem_ver);
@@ -104,7 +122,10 @@ public class MenuBar extends JMenuBar{
 		            v.cambiarAPantalla(PantallaRequisitosEmpleado.class);
 		        } catch (IOException e1) {
 		            e1.printStackTrace();
-		        }
+		        } catch (SQLException e1) {
+			    // TODO Auto-generated catch block
+			    e1.printStackTrace();
+			}
 		    }
 		});
 		mnNewMenu_1.add(mntmNewMenuItem_3);
@@ -116,7 +137,10 @@ public class MenuBar extends JMenuBar{
 		            v.cambiarAPantalla(PantallaTurnos.class);
 		        } catch (IOException e1) {
 		            e1.printStackTrace();
-		        }
+		        } catch (SQLException e1) {
+			    // TODO Auto-generated catch block
+			    e1.printStackTrace();
+			}
 		    }
 		});
 		mnNewMenu_1.add(mntmNewMenuItem_4);
@@ -131,7 +155,10 @@ public class MenuBar extends JMenuBar{
 		            v.cambiarAPantalla(PantallaTAndA.class);
 		        } catch (IOException e1) {
 		            e1.printStackTrace();
-		        }
+		        } catch (SQLException e1) {
+			    // TODO Auto-generated catch block
+			    e1.printStackTrace();
+			}
 		    }
 		});
 		mnNewMenu_2.add(mntmNewMenuItem_5);
@@ -145,7 +172,10 @@ public class MenuBar extends JMenuBar{
 		            v.cambiarAPantalla(PantallaInformes.class);
 		        } catch (IOException e1) {
 		            e1.printStackTrace();
-		        }
+		        } catch (SQLException e1) {
+			    // TODO Auto-generated catch block
+			    e1.printStackTrace();
+			}
 		    }
 		});
 		mnNewMenu_3.add(mntmNewMenuItem_6);
@@ -159,6 +189,9 @@ public class MenuBar extends JMenuBar{
 		        try {
 			    v.cambiarAPantalla(PantallaLogin.class);
 			} catch (IOException e1) {
+			    // TODO Auto-generated catch block
+			    e1.printStackTrace();
+			} catch (SQLException e1) {
 			    // TODO Auto-generated catch block
 			    e1.printStackTrace();
 			}

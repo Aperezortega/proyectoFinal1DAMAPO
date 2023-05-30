@@ -24,7 +24,9 @@ import enums.TipoTurno;
         private static final String csvFile = "requisitos.csv";
         
         
-
+        public Planificador() {
+            
+        }
         /**
          * @param prevision
          * @param listaEmpleados
@@ -72,7 +74,7 @@ import enums.TipoTurno;
     	        return ret;
      }
         
-        public List<Turno> generarTurnos(PrevisionFecha previsiones) {
+        public List<Turno> generarTurnos(PrevisionFecha previsiones) throws IOException {
             List<Turno> turnos = new ArrayList<Turno>();
            
             byte numCajerosAnterior = 0;
@@ -165,7 +167,32 @@ import enums.TipoTurno;
             return nombres.toString();
         }
 
-        
+        public ArrayList<Empleado> verEmpleadosDisponiblesArrayList(String idTurno, ArrayList<Empleado> plantilla) {
+            ArrayList<Empleado> empleadosDisponibles = new ArrayList<>();
+            
+            for (Turno turno : listaTurnos) {
+                if (turno.getIdTurno().equals(idTurno)) {
+                    TipoTurno tipoTurno = turno.getTipoTurno();
+                    LocalDate fecha = turno.getFechaTurno();
+                    for (Empleado empleado : plantilla) {
+                        switch (tipoTurno) {
+                            case MAÑANA:
+                                if (empleado.isWorkinMañanas(fecha)) {
+                                    empleadosDisponibles.add(empleado);
+                                }
+                                break;
+                            case TARDE:
+                                if (empleado.isWorkinTardes(fecha)) {
+                                    empleadosDisponibles.add(empleado);
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
+            
+            return empleadosDisponibles;
+        } 
         
         
         
@@ -208,7 +235,10 @@ import enums.TipoTurno;
           */
         
         
-        private byte calcularNumCajeros(int visitas) {
+        private byte calcularNumCajeros(int visitas) throws IOException {
+            if(requerimientos==null) {
+        	    requerimientos= generarRequerimientos(csvFile);
+        	}
             Collections.sort(requerimientos, Comparator.comparing(RequerimientosEmpleados::getVisitas));
             byte numCajeros =1;
             

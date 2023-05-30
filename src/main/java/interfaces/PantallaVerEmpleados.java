@@ -33,8 +33,13 @@ public class PantallaVerEmpleados extends Pantalla{
     private Ventana ventana;
     private JTable table;
     private JTable table_1;
+    private  ArrayList<Empleado> plantilla;
     public PantallaVerEmpleados (Ventana v) {
 	super(v);
+	
+	plantilla = new ArrayList<Empleado>();
+	
+	
 	this.setPreferredSize(new Dimension(800, 600));
 	setLayout(null);
 	
