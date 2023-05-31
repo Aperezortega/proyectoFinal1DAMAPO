@@ -1,10 +1,13 @@
 package clases;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 
 import enums.Funcion;
 import enums.TipoTurno;
+import utils.DAO;
 
 public class Turno {
     
@@ -23,6 +26,26 @@ public class Turno {
      * @param empleado
      * @param funcion
      */
+    public Turno(String idTurno) throws SQLException {
+	    ArrayList<String> consulta = DAO.selectAndPrint("select * from turnos where id_turno ='"+idTurno +"'");
+	    this.idTurno = consulta.get(1);
+	    this.fechaTurno = LocalDate.parse(consulta.get(2));
+	    this.horaInicio = LocalTime.parse(consulta.get(3));
+	    this.horaFin = LocalTime.parse(consulta.get(4));
+	    String empleadoId = consulta.get(5);
+	    if (empleadoId != null && !empleadoId.equalsIgnoreCase("null")) {
+	        this.empleado = new Empleado(empleadoId);
+	    }
+	    this.empleado = new Empleado(consulta.get(5));
+	    this.funcion = Funcion.valueOf(consulta.get(6));
+	    if (horaInicio.getHour() >= 10 && horaInicio.getHour() < 14) {
+		    this.tipoTurno = TipoTurno.MAÑANA;
+		} else {
+		    this.tipoTurno = TipoTurno.TARDE;
+		}
+	}
+
+    
     public Turno(String idTurno, LocalDate fechaTurno, LocalTime horaInicio, LocalTime horaFin, Empleado empleado,
 	    Funcion funcion) {
 	super();
@@ -39,8 +62,9 @@ public class Turno {
 	}
     }
     public Turno(String idTurno, LocalDate fechaTurno, LocalTime horaInicio, LocalTime horaFin,
-	    Funcion funcion) {
+	    Funcion funcion) throws SQLException {
 	super();
+	
 	this.idTurno = idTurno;
 	this.fechaTurno = fechaTurno;
 	this.horaInicio = horaInicio;
@@ -51,9 +75,11 @@ public class Turno {
 	} else {
 	    this.tipoTurno = TipoTurno.TARDE;
 	}
+	DAO.insert("INSERT INTO turnos (id_turno, fecha_turno, hora_inicio, hora_fin, funcion) VALUES ('"+idTurno+"', '"+fechaTurno+"', '"+horaInicio+"', '"+horaFin+"', '"+funcion+"')"); 
     }
     
     
+
     
     
     public String getIdTurno() {

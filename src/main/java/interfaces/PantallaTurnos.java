@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.chrono.ChronoLocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -38,6 +40,7 @@ import clases.PrevisionHora;
 import clases.Turno;
 import enums.Funcion;
 import enums.TipoTurno;
+import exceptions.FechaSinPrevisionExcepcion;
 import utils.DAO;
 
 import javax.swing.JList;
@@ -48,6 +51,7 @@ import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 
 public class PantallaTurnos extends Pantalla{
     private DatePicker inicioDatePicker;
@@ -56,14 +60,16 @@ public class PantallaTurnos extends Pantalla{
     private Ventana ventana;
     private TurnoChart turnoChart;
     private ArrayList<Turno> turnos = new ArrayList<>();
-    Planificador p = new Planificador();
     PrevisionFecha previsionFecha;
     JComboBox<Turno> turnosComboBox = new JComboBox<>();
     private JTable tablaEmpleadosDisponibles;
     private ArrayList<Empleado>plantilla;
     private Turno selectedTurno;
+    private Planificador p = new Planificador();
+    private ChronoLocalDate fechaUltimaPrevision = LocalDate.parse(DAO.select("SELECT MAX(fecha) AS ultima_fecha FROM previsiones").toString().replace("[", "").replace("]", ""));
     public PantallaTurnos(Ventana v) throws SQLException {
 	super(v);
+	setFocusable(false);
 	this.setPreferredSize(new Dimension(1500, 1000));
 	setLayout(null);
 	
@@ -71,7 +77,7 @@ public class PantallaTurnos extends Pantalla{
 	
 	 // Crear los componentes de selección de fecha
         inicioDatePicker = new DatePicker();
-        inicioDatePicker.setBounds(45, 46, 181, 35);
+        inicioDatePicker.setBounds(417, 46, 181, 35);
         inicioDatePicker.getComponentToggleCalendarButton().setBounds(141, 5, 26, 25);
         inicioDatePicker.getComponentDateTextField().setBounds(10, 5, 137, 25);
         add(inicioDatePicker);
@@ -80,33 +86,33 @@ public class PantallaTurnos extends Pantalla{
         finDatePicker = new DatePicker();
         finDatePicker.getComponentToggleCalendarButton().setBounds(131, 5, 26, 25);
         finDatePicker.getComponentDateTextField().setBounds(0, 5, 137, 25);
-        finDatePicker.setBounds(260, 46, 167, 35);
+        finDatePicker.setBounds(608, 46, 167, 35);
         add(finDatePicker);
         finDatePicker.setLayout(null);
         
         JLabel lblNewLabel = new JLabel("Fecha Inicio");
         lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        lblNewLabel.setBounds(59, 24, 161, 14);
+        lblNewLabel.setBounds(431, 24, 161, 14);
         add(lblNewLabel);
         
         JLabel lblNewLabel_1 = new JLabel("Fecha Fin");
         lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-        lblNewLabel_1.setBounds(260, 24, 167, 14);
+        lblNewLabel_1.setBounds(608, 24, 167, 14);
         add(lblNewLabel_1);
         
      // Crear el componente JComboBox
-        JComboBox<String> comboBox = new JComboBox<>();
-        comboBox.setBounds(459, 51, 116, 25);
-        comboBox.addItem("Ver Turnos");
-        comboBox.addItem("Generar Turnos");
-        add(comboBox);
+        JComboBox<String> accionComboBox = new JComboBox<>();
+        accionComboBox.setBounds(787, 51, 116, 25);
+        accionComboBox.addItem("Ver Turnos");
+        accionComboBox.addItem("Generar Turnos");
+        add(accionComboBox);
         
      
 
         // Manejar el evento de selección del JComboBox
-        comboBox.addActionListener(new ActionListener() {
+        accionComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String selectedOption = (String) comboBox.getSelectedItem();
+                String selectedOption = (String) accionComboBox.getSelectedItem();
                 System.out.println("Opción seleccionada: " + selectedOption);
             }
         });
@@ -121,30 +127,91 @@ public class PantallaTurnos extends Pantalla{
                     JOptionPane.showMessageDialog(null, "La fecha de fin no puede ser anterior a la fecha de inicio.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+                // Verificar si la fecha de fin es mayor a la fecha de fechaUltimaPrevision
+                if (fechaFin.isAfter(fechaUltimaPrevision)) {
+                    // Lanzar una excepción personalizada
+                    try {
+                        throw new FechaSinPrevisionExcepcion("Estas intentando generar turnos para un dia en el que no tenemos cargada la prevision");
+                    } catch (FechaSinPrevisionExcepcion ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    return;
+                }
                 // Genera la lista de todas las fechas en el rango
                 long numOfDaysBetween = ChronoUnit.DAYS.between(fechaInicio, fechaFin);
                 Stream<LocalDate> fechas = Stream.iterate(fechaInicio, date -> date.plusDays(1))
                         .limit(numOfDaysBetween + 1);
+                String selectedAction = (String) accionComboBox.getSelectedItem();
+                if (selectedAction.equals("Generar Turnos")) {
+                    // Llama a la función generarTurnos() para cada fecha en la lista
+                   
+                    fechas.forEach(date -> {
+                        // Aquí tendrías que crear tu objeto PrevisionFecha
+                        // Para este ejemplo, asumiré que tienes un método que retorna un objeto PrevisionFecha dado un LocalDate
+                        try {
+                            previsionFecha = new PrevisionFecha(date);
+                        } catch (SQLException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        }
 
-                // Llama a la función generarTurnos() para cada fecha en la lista
-                fechas.forEach(date -> {
-                    // Aquí tendrías que crear tu objeto PrevisionFecha
-                    // Para este ejemplo, asumiré que tienes un método que retorna un objeto PrevisionFecha dado un LocalDate
+                        // Ahora generamos los turnos
+                        try {
+                            List<Turno> turnosGenerados = p.generarTurnos(previsionFecha);
+                            // Aquí puedes hacer lo que quieras con los turnos generados
+                            // Por ejemplo, podrías agregarlos a tu lista de turnos
+                            turnos.addAll(turnosGenerados);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        } catch (SQLException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                           
+                        	 JOptionPane.showMessageDialog(null,
+                                         "Selecciona Ver Turnos",
+                                         " Ya hay turnos Generados",
+                                         JOptionPane.ERROR_MESSAGE);
+                        	
+                        }
+
+                        turnosDatePicker.setDate(fechaInicio);
+                        // Actualiza los datos del gráfico con los nuevos turnos generados
+                        turnoChart.setDatos(fechaInicio, turnos);  // Asegúrate de pasar la fecha correspondiente aquí
+
+                        // Actualiza el JComboBox con los IDs de los nuevos turnos
+                        turnosComboBox.removeAllItems();
+                        for (Turno turno : turnos) {
+                            if (turno.getFechaTurno().equals(turnosDatePicker.getDate())) {
+                                turnosComboBox.addItem(turno);
+                            }
+                        }
+                        String chartTitle = "Turnos " + fechaInicio.toString();
+                        turnoChart.getChart().setTitle(chartTitle);
+
+                        actualizarTablaEmpleados(verEmpleadosDisponiblesArrayList(selectedTurno,plantilla));
+                    });
+                } else {
+                    String query = "select id_turno from turnos where fecha_turno between '"
+                            + fechaInicio.toString()
+                            + "' and '"
+                            + fechaFin.toString()
+                            + "'";
+                    ArrayList<String> turnosIdList;
                     try {
-                        previsionFecha = new PrevisionFecha(date);
+                        turnosIdList = DAO.selectAndPrint(query);
+                        for (String idTurno : turnosIdList) {
+                            try {
+                                Turno turno = new Turno(idTurno);
+                                // Aquí puedes hacer lo que necesites con el turno
+                                // Por ejemplo, podrías agregarlo a tu lista de turnos
+                                turnos.add(turno);
+                            } catch (SQLException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
                     } catch (SQLException e1) {
-                        // TODO Auto-generated catch block
                         e1.printStackTrace();
-                    }
-
-                    // Ahora generamos los turnos
-                    try {
-                        List<Turno> turnosGenerados = p.generarTurnos(previsionFecha);
-                        // Aquí puedes hacer lo que quieras con los turnos generados
-                        // Por ejemplo, podrías agregarlos a tu lista de turnos
-                        turnos.addAll(turnosGenerados);
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
                     }
                     turnosDatePicker.setDate(fechaInicio);
                     // Actualiza los datos del gráfico con los nuevos turnos generados
@@ -159,14 +226,14 @@ public class PantallaTurnos extends Pantalla{
                     }
                     String chartTitle = "Turnos " + fechaInicio.toString();
                     turnoChart.getChart().setTitle(chartTitle);
-                    
+
                     actualizarTablaEmpleados(verEmpleadosDisponiblesArrayList(selectedTurno,plantilla));
-                    
-                });
-            }
-        });
-        btnNewButton.setBounds(633, 52, 89, 23);
+                }
+            } // Cierre de la función actionPerformed
+        }); // Cierre de la clase anónima ActionListener
+        btnNewButton.setBounds(938, 52, 89, 23);
         add(btnNewButton);
+
         
         
         turnosDatePicker = new DatePicker();
@@ -317,10 +384,33 @@ public class PantallaTurnos extends Pantalla{
         });
         btnNewButton_1.setBounds(45, 670, 167, 23);
         add(btnNewButton_1);
-        
-        tablaEmpleadosDisponibles = new JTable();
-        tablaEmpleadosDisponibles.setBounds(1169, 122, 289, 600);
-        add(tablaEmpleadosDisponibles);
+
+	String[] columnNames = {
+		     
+		    "Nombre", 
+		    "Grupo_Empleados", 
+		    "Funciones", 
+		   
+		};
+
+		// Crear el modelo de la tabla con los nombres de las columnas
+		DefaultTableModel model = new DefaultTableModel(null, columnNames) {
+		    @Override
+		    public boolean isCellEditable(int row, int column) {
+		        // Todas las celdas no son editables
+		        return false;
+		}
+		
+		    };
+        tablaEmpleadosDisponibles = new JTable(model);
+        JScrollPane scrollPane = new JScrollPane(tablaEmpleadosDisponibles);
+        scrollPane.setFocusable(false);
+        scrollPane.setViewportBorder(UIManager.getBorder("TextPane.border"));
+        scrollPane.setFont(new Font("Tahoma", Font.PLAIN, 10));
+        scrollPane.setBounds(1169, 122, 289, 600);
+        add(scrollPane);
+        //tablaEmpleadosDisponibles.setBounds(1169, 122, 289, 600);
+        //add(tablaEmpleadosDisponibles);
         
         JLabel lblNewLabel_2 = new JLabel("Seleccionar Turno");
         lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
@@ -344,8 +434,13 @@ public class PantallaTurnos extends Pantalla{
         
         JLabel lblNewLabel_6 = new JLabel("Seleccionar Accion");
         lblNewLabel_6.setHorizontalAlignment(SwingConstants.CENTER);
-        lblNewLabel_6.setBounds(459, 24, 116, 14);
+        lblNewLabel_6.setBounds(787, 24, 116, 14);
         add(lblNewLabel_6);
+        
+        JLabel labelUltimaPrevision = new JLabel("Prevision cargada hasta :"+fechaUltimaPrevision);
+        labelUltimaPrevision.setFont(new Font("Tahoma", Font.BOLD, 12));
+        labelUltimaPrevision.setBounds(45, 56, 241, 14);
+        add(labelUltimaPrevision);
     	}
  // Método para actualizar la tabla con los empleados disponibles
     public void actualizarTablaEmpleados(ArrayList<Empleado> empleados) {

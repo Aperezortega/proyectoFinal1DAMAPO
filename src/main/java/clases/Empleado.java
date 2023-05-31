@@ -38,37 +38,42 @@ public class Empleado {
      * @throws SQLException 
      */
     public Empleado(String idEmpleado) throws SQLException {
-	ArrayList<String>consulta = DAO.select("select * from empleados where `ID Empleado` ='"+idEmpleado +"'");
-	this.idEmpleado=consulta.get(1);
-	this.apellidos=consulta.get(2);
-	this.nombre=consulta.get(3);
-	this.email=consulta.get(4);
-	this.contraseña=consulta.get(5);
-	this.grupo=GruposEmpleados.valueOf(consulta.get(6));
-	this.coeficienteParcialidad=Float.parseFloat(consulta.get(7));
-	Byte skill1=Byte.parseByte(consulta.get(8));
-	Byte skill2=Byte.parseByte(consulta.get(9));
-	Byte skill3=Byte.parseByte(consulta.get(10));
-	Byte skill4=Byte.parseByte(consulta.get(11));
-	  List<Funcion> funcionesList = new ArrayList<Funcion>();
-             if (skill1==1) {
-                 funcionesList.add(Funcion.CAJA);
-             }
-             if (skill2==1) {
-                 funcionesList.add(Funcion.ALMACEN);
-             }
-             if (skill3==1) {
-                 funcionesList.add(Funcion.ATTPUBLICO);
-             }
-             if (skill1==4) {
-                 funcionesList.add(Funcion.SUPERVISOR);
-             }
+	    if (idEmpleado == null || idEmpleado.equalsIgnoreCase("null")) {
+	        // Aquí puedes establecer los valores predeterminados para este objeto Empleado cuando el idEmpleado es 'null'.
+	        // Dependiendo de cómo quieras manejar este caso, puedes dejar los campos como null, o asignarles algún valor por defecto.
+	    } else {
+	        ArrayList<String> consulta = DAO.select("select * from empleados where `ID Empleado` ='" + idEmpleado + "'");
+	        this.idEmpleado=consulta.get(1);
+	        this.apellidos=consulta.get(2);
+	        this.nombre=consulta.get(3);
+	        this.email=consulta.get(4);
+	        this.contraseña=consulta.get(5);
+	        this.grupo=GruposEmpleados.valueOf(consulta.get(6));
+	        this.coeficienteParcialidad=Float.parseFloat(consulta.get(7));
+	        Byte skill1=Byte.parseByte(consulta.get(8));
+	        Byte skill2=Byte.parseByte(consulta.get(9));
+	        Byte skill3=Byte.parseByte(consulta.get(10));
+	        Byte skill4=Byte.parseByte(consulta.get(11));
+	        List<Funcion> funcionesList = new ArrayList<Funcion>();
+	        if (skill1==1) {
+	            funcionesList.add(Funcion.CAJA);
+	        }
+	        if (skill2==1) {
+	            funcionesList.add(Funcion.ALMACEN);
+	        }
+	        if (skill3==1) {
+	            funcionesList.add(Funcion.ATTPUBLICO);
+	        }
+	        if (skill1==4) {
+	            funcionesList.add(Funcion.SUPERVISOR);
+	        }
 
-             // Convertir la lista a un array.
-             
-	this.funciones=EnumSet.copyOf(funcionesList);
-    
-    }
+	        // Convertir la lista a un array.
+	        
+	        this.funciones=EnumSet.copyOf(funcionesList);
+	    }
+	}
+
     public Empleado(String idEmpleado, String apellidos, String nombre, String email, String contraseña, GruposEmpleados grupo, Float coeficienteParcialidad, Funcion...funciones) throws SQLException{
 	super();
 	this.idEmpleado = idEmpleado;

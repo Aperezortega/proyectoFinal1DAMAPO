@@ -3,6 +3,7 @@
     import java.io.BufferedReader;
     import java.io.FileReader;
     import java.io.IOException;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,7 +16,7 @@ import java.util.List;
 import enums.Funcion;
 import enums.TipoTurno;
     
-    public class Planificador {
+    public  class Planificador {
         
         private PrevisionFecha prevision;
         private ArrayList<Empleado> listaEmpleados;
@@ -43,7 +44,7 @@ import enums.TipoTurno;
     	this.listaTurnos = listaTurnos;
         }
     
-        public Planificador (PrevisionFecha prevision) throws IOException {
+        public Planificador (PrevisionFecha prevision) throws IOException, SQLException {
         super();
         if(requerimientos==null) {
     	    requerimientos= generarRequerimientos(csvFile);
@@ -74,7 +75,7 @@ import enums.TipoTurno;
     	        return ret;
      }
         
-        public List<Turno> generarTurnos(PrevisionFecha previsiones) throws IOException {
+        public List<Turno> generarTurnos(PrevisionFecha previsiones) throws IOException, SQLException {
             List<Turno> turnos = new ArrayList<Turno>();
            
             byte numCajerosAnterior = 0;
