@@ -32,11 +32,11 @@ public class Turno {
 	this.horaFin = horaFin;
 	this.empleado = empleado;
 	this.funcion = funcion;
-	  if (horaInicio.getHour() >= 10 && horaInicio.getHour() < 14) {
-	            this.tipoTurno = TipoTurno.MAÑANA;
-	        } else {
-	            this.tipoTurno = TipoTurno.TARDE;
-	        }
+	if (horaInicio.getHour() >= 10 && horaInicio.getHour() < 14) {
+	    this.tipoTurno = TipoTurno.MAÑANA;
+	} else {
+	    this.tipoTurno = TipoTurno.TARDE;
+	}
     }
     public Turno(String idTurno, LocalDate fechaTurno, LocalTime horaInicio, LocalTime horaFin,
 	    Funcion funcion) {
@@ -46,11 +46,11 @@ public class Turno {
 	this.horaInicio = horaInicio;
 	this.horaFin = horaFin;
 	this.funcion = funcion;
-	  if (horaInicio.getHour() >= 10 && horaInicio.getHour() < 14) {
-	            this.tipoTurno = TipoTurno.MAÑANA;
-	        } else {
-	            this.tipoTurno = TipoTurno.TARDE;
-	        }
+	if (horaInicio.getHour() >= 10 && horaInicio.getHour() < 14) {
+	    this.tipoTurno = TipoTurno.MAÑANA;
+	} else {
+	    this.tipoTurno = TipoTurno.TARDE;
+	}
     }
     
     

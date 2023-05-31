@@ -1,6 +1,7 @@
 package clases;
 
 import java.sql.SQLException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -37,7 +38,7 @@ public class Empleado {
      * @throws SQLException 
      */
     public Empleado(String idEmpleado) throws SQLException {
-	ArrayList<String>consulta = DAO.selectAndPrint("select * from empleados where `ID Empleado` ='"+idEmpleado +"'");
+	ArrayList<String>consulta = DAO.select("select * from empleados where `ID Empleado` ='"+idEmpleado +"'");
 	this.idEmpleado=consulta.get(1);
 	this.apellidos=consulta.get(2);
 	this.nombre=consulta.get(3);
@@ -169,71 +170,44 @@ public class Empleado {
 
     
     public boolean isWorkinMañanas(LocalDate fecha) {
-	 Calendar calendar = Calendar.getInstance();
-	        calendar.setTime(Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-	        int dayOfCycle;
-
-	        switch (this.getGrupo()) {
-	            case GRUPO_A:
-	                dayOfCycle = calendar.get(Calendar.DAY_OF_YEAR) % 6;
-	                break;
-	            case GRUPO_B:
-	                dayOfCycle = (calendar.get(Calendar.DAY_OF_YEAR) + 2) % 6;
-	                break;
-	            case GRUPO_C:
-	                dayOfCycle = (calendar.get(Calendar.DAY_OF_YEAR) + 4) % 6;
-	                break;
-	            default:
-	                throw new IllegalArgumentException("Grupo desconocido: " + this.getGrupo());
-	        }
-
-	        switch (dayOfCycle) {
-	            case 0:
-	            case 1:
-	                return true;
-	            case 2:
-	            case 3:
-	            case 4:
-	            case 5:
-	                return false;
-	            default:
-	                throw new IllegalArgumentException("Valor de dayOfCycle no válido: " + dayOfCycle);
-	        }
+	    if (fecha.getDayOfWeek() == DayOfWeek.SUNDAY) {
+	        return false;
 	    }
+
+	    switch (fecha.getDayOfWeek()) {
+	        case MONDAY:
+	        case TUESDAY:
+	            return this.getGrupo() == GruposEmpleados.GRUPO_A;
+	        case WEDNESDAY:
+	        case THURSDAY:
+	            return this.getGrupo() == GruposEmpleados.GRUPO_C;
+	        case FRIDAY:
+	        case SATURDAY:
+	            return this.getGrupo() == GruposEmpleados.GRUPO_B;
+	        default:
+	            throw new IllegalArgumentException("Día de la semana no válido: " + fecha.getDayOfWeek());
+	    }
+	}
     
     public boolean isWorkinTardes(LocalDate fecha) {
-	 Calendar calendar = Calendar.getInstance();
-	        calendar.setTime(Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-	        int dayOfCycle;
-
-	        switch (this.getGrupo()) {
-	            case GRUPO_A:
-	                dayOfCycle = calendar.get(Calendar.DAY_OF_YEAR) % 6;
-	                break;
-	            case GRUPO_B:
-	                dayOfCycle = (calendar.get(Calendar.DAY_OF_YEAR) + 2) % 6;
-	                break;
-	            case GRUPO_C:
-	                dayOfCycle = (calendar.get(Calendar.DAY_OF_YEAR) + 4) % 6;
-	                break;
-	            default:
-	                throw new IllegalArgumentException("Grupo desconocido: " + this.getGrupo());
-	        }
-
-	        switch (dayOfCycle) {
-	            case 0:
-	            case 1:
-	                return false;
-	            case 2:
-	            case 3:
-	        	return true;
-	            case 4:
-	            case 5:
-	                return false;
-	            default:
-	                throw new IllegalArgumentException("Valor de dayOfCycle no válido: " + dayOfCycle);
-	        }
+	    if (fecha.getDayOfWeek() == DayOfWeek.SUNDAY) {
+	        return false;
 	    }
+
+	    switch (fecha.getDayOfWeek()) {
+	        case MONDAY:
+	        case TUESDAY:
+	            return this.getGrupo() == GruposEmpleados.GRUPO_B;
+	        case WEDNESDAY:
+	        case THURSDAY:
+	            return this.getGrupo() == GruposEmpleados.GRUPO_A;
+	        case FRIDAY:
+	        case SATURDAY:
+	            return this.getGrupo() == GruposEmpleados.GRUPO_C;
+	        default:
+	            throw new IllegalArgumentException("Día de la semana no válido: " + fecha.getDayOfWeek());
+	    }
+	}
     
     /**
      * @return the idEmpleado
@@ -333,7 +307,7 @@ public class Empleado {
 
     /**
      * @param horasBaseContrato the horasBaseContrato to set
-     */
+     */ 
     
 
     /**
@@ -362,6 +336,11 @@ public class Empleado {
      */
     public void setGrupo(GruposEmpleados grupo) {
         this.grupo = grupo;
+    }
+    @Override
+    public String toString() {
+	return "Empleado [idEmpleado=" + idEmpleado + ", apellidos=" + apellidos + ", nombre=" + nombre + ", grupo="
+		+ grupo + ", funciones=" + funciones + "]\n";
     }
     
     

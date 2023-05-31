@@ -144,7 +144,7 @@ public class Ventana extends JFrame{
     Deque<Class<?>> screenHistory = new ArrayDeque<>();
 
     public Ventana() throws IOException {
-	this.setSize(1200,1000);
+	this.setSize(1500,1000);
 	this.setTitle("EasyPlanner");
 	this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	this.setLocationRelativeTo(null);

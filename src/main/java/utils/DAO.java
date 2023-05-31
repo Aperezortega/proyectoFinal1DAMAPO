@@ -14,6 +14,7 @@ import java.util.Map;
 
 import com.mysql.cj.jdbc.result.ResultSetMetaData;
 
+import clases.Empleado;
 import clases.PrevisionFecha;
 import clases.PrevisionHora;
 
@@ -141,5 +142,26 @@ public abstract class DAO {
 
 	    return new ArrayList<>(map.values());
 	}
+    
+    public static ArrayList<Empleado> SelectEmpleados() throws SQLException {
+	    ArrayList<String> resultadoQuery = new ArrayList<>();
+	    ArrayList<Empleado> plantilla = new ArrayList<>();
+	    try {
+	        resultadoQuery = DAO.select("SELECT `ID Empleado` FROM empleados");
+	    } catch (SQLException e1) {
+	        e1.printStackTrace();
+	    }
+	    
+	    for (int i = 0; i < resultadoQuery.size(); i ++) {
+	        String idEmpleado = resultadoQuery.get(i);
+	      
+	        
+	        Empleado empleado = new Empleado(idEmpleado);
+	        plantilla.add(empleado);
+	    }
+	    
+	    return plantilla;
+	}
+
 
 }
