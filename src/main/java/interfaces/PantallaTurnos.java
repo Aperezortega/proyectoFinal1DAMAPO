@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.chrono.ChronoLocalDate;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,9 @@ import clases.PrevisionHora;
 import clases.Turno;
 import enums.Funcion;
 import enums.TipoTurno;
+import exceptions.EmpleadoNoDisponibleExcepcion;
 import exceptions.FechaSinPrevisionExcepcion;
+import exceptions.IdTurnoRepetidaExcepcion;
 import utils.DAO;
 
 import javax.swing.JList;
@@ -51,6 +54,7 @@ import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 public class PantallaTurnos extends Pantalla{
@@ -66,14 +70,42 @@ public class PantallaTurnos extends Pantalla{
     private ArrayList<Empleado>plantilla;
     private Turno selectedTurno;
     private Planificador p = new Planificador();
-    private ChronoLocalDate fechaUltimaPrevision = LocalDate.parse(DAO.select("SELECT MAX(fecha) AS ultima_fecha FROM previsiones").toString().replace("[", "").replace("]", ""));
+    private ChronoLocalDate fechaUltimaPrevision;
+    private ChronoLocalDate fechaUltimoTurno;
+   
+   
+
+    
+    
     public PantallaTurnos(Ventana v) throws SQLException {
 	super(v);
 	setFocusable(false);
 	this.setPreferredSize(new Dimension(1500, 1000));
 	setLayout(null);
-	
 	plantilla = DAO.SelectEmpleados();
+	try {
+	    String fechaUltimaPrevisionString = DAO.select("SELECT MAX(fecha) AS ultima_fecha FROM previsiones").toString().replace("[", "").replace("]", "");
+	    if (fechaUltimaPrevisionString != null && !fechaUltimaPrevisionString.isEmpty()) {
+	        fechaUltimaPrevision = LocalDate.parse(fechaUltimaPrevisionString);
+	    } else {
+	        fechaUltimaPrevision = null; // Si no hay resultados, asigna null a la variable
+	    }
+	} catch (DateTimeParseException e) {
+	    fechaUltimaPrevision = null; // Si hay un error al parsear la fecha, asigna null a la variable
+	}
+
+	
+	 try {
+		    String fechaUltimoTurnoString = DAO.select("SELECT MAX(fecha_turno) AS ultima_fecha FROM turnos").toString().replace("[", "").replace("]", "");
+		    if (fechaUltimoTurnoString != null && !fechaUltimoTurnoString.isEmpty()) {
+		        fechaUltimoTurno = LocalDate.parse(fechaUltimoTurnoString);
+		    } else {
+		        fechaUltimoTurno = null; // Si no hay resultados, asigna null a la variable
+		    }
+		} catch (DateTimeParseException e) {
+		    fechaUltimoTurno = null; // Si hay un error al parsear la fecha, asigna null a la variable
+		}
+	
 	
 	 // Crear los componentes de selección de fecha
         inicioDatePicker = new DatePicker();
@@ -200,6 +232,13 @@ public class PantallaTurnos extends Pantalla{
                     ArrayList<String> turnosIdList;
                     try {
                         turnosIdList = DAO.selectAndPrint(query);
+                        if (turnosIdList.isEmpty()) {
+                            JOptionPane.showMessageDialog(null,
+                                    "No hay turnos generados en el rango de fechas seleccionado",
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                            return; // Agregamos un return para salir del método actionPerformed
+                        }
                         for (String idTurno : turnosIdList) {
                             try {
                                 Turno turno = new Turno(idTurno);
@@ -252,11 +291,15 @@ public class PantallaTurnos extends Pantalla{
             public void actionPerformed(ActionEvent e) {
                 LocalDate currentDate = turnosDatePicker.getDate();
                 LocalDate prevDate = currentDate.minusDays(1);
+                if (prevDate.isBefore(inicioDatePicker.getDate())) {
+                    prevDate = inicioDatePicker.getDate();
+                }
+
                 turnosDatePicker.setDate(prevDate);
                 turnoChart.actualizarChart(prevDate);
                 String chartTitle = "Turnos " + turnosDatePicker.getDate().toString();
                 turnoChart.getChart().setTitle(chartTitle);
-                actualizarTablaEmpleados(verEmpleadosDisponiblesArrayList(selectedTurno,plantilla));
+                actualizarTablaEmpleados(verEmpleadosDisponiblesArrayList(selectedTurno, plantilla));
                 turnosComboBox.removeAllItems();
                 LocalDate fechaSeleccionada = turnosDatePicker.getDate();
                 for (Turno turno : turnos) {
@@ -264,9 +307,8 @@ public class PantallaTurnos extends Pantalla{
                         turnosComboBox.addItem(turno);
                     }
                 }
-                
+
                 // Actualizar la selección del turno en turnosComboBox
-                Turno selectedTurno = (Turno) turnosComboBox.getSelectedItem();
                 actualizarTablaEmpleados(verEmpleadosDisponiblesArrayList(selectedTurno, plantilla));
             }
         });
@@ -280,11 +322,15 @@ public class PantallaTurnos extends Pantalla{
             public void actionPerformed(ActionEvent e) {
                 LocalDate currentDate = turnosDatePicker.getDate();
                 LocalDate nextDate = currentDate.plusDays(1);
+                if (nextDate.isAfter(fechaUltimoTurno)) {
+                    nextDate = (LocalDate) fechaUltimoTurno;
+                }
+
                 turnosDatePicker.setDate(nextDate);
                 turnoChart.actualizarChart(nextDate);
                 String chartTitle = "Turnos " + turnosDatePicker.getDate().toString();
                 turnoChart.getChart().setTitle(chartTitle);
-                actualizarTablaEmpleados(verEmpleadosDisponiblesArrayList(selectedTurno,plantilla));
+                actualizarTablaEmpleados(verEmpleadosDisponiblesArrayList(selectedTurno, plantilla));
                 turnosComboBox.removeAllItems();
                 LocalDate fechaSeleccionada = turnosDatePicker.getDate();
                 for (Turno turno : turnos) {
@@ -292,9 +338,8 @@ public class PantallaTurnos extends Pantalla{
                         turnosComboBox.addItem(turno);
                     }
                 }
-                
+
                 // Actualizar la selección del turno en turnosComboBox
-                Turno selectedTurno = (Turno) turnosComboBox.getSelectedItem();
                 actualizarTablaEmpleados(verEmpleadosDisponiblesArrayList(selectedTurno, plantilla));
             }
         });
@@ -334,7 +379,24 @@ public class PantallaTurnos extends Pantalla{
      TimePicker finTimePicker = new TimePicker();
      finTimePicker.setBounds(45, 350, 167, 35);  // ajusta la posición y tamaño según tus necesidades
      add(finTimePicker);
-
+     JComboBox<Empleado> empleadosComboBox = new JComboBox();
+     empleadosComboBox.setBounds(45, 419, 167, 35);
+     empleadosComboBox.addItem(null);
+     add(empleadosComboBox);
+     empleadosComboBox.setRenderer(new DefaultListCellRenderer() {
+	    @Override
+	    public Component getListCellRendererComponent(JList<?> list, Object value,
+	                                                  int index, boolean isSelected, boolean cellHasFocus) {
+	        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+	        if (value instanceof Empleado) {
+	            Empleado empleado = (Empleado) value;
+	            setText(empleado.getNombre()+" "+empleado.getApellidos());
+	        }else {
+	            setText("no asignar empleado");
+	        }
+	        return this;
+	    }
+	});
 
      // Manejar el evento de cambio de turno seleccionado en el JComboBox
      turnosComboBox.addActionListener(new ActionListener() {
@@ -348,6 +410,22 @@ public class PantallaTurnos extends Pantalla{
 	            inicioTimePicker.setTime(selectedTurno.getHoraInicio());
 	            finTimePicker.setTime(selectedTurno.getHoraFin());
 	            actualizarTablaEmpleados(verEmpleadosDisponiblesArrayList(selectedTurno,plantilla));
+	         // Limpiar el modelo actual del ComboBox empleadosComboBox
+	            DefaultComboBoxModel<Empleado> modeloEmpleados = (DefaultComboBoxModel<Empleado>) empleadosComboBox.getModel();
+	            modeloEmpleados.removeAllElements();
+	            modeloEmpleados.addElement(null);
+	            Empleado empleadoAsignado = selectedTurno.getEmpleado();
+	            if (empleadoAsignado != null) {
+	                modeloEmpleados.addElement(empleadoAsignado);
+	            }
+	            // Llenar el modelo del ComboBox empleadosComboBox con los empleados disponibles
+	            for (Empleado empleado : verEmpleadosDisponiblesArrayList(selectedTurno,plantilla)) {
+	                modeloEmpleados.addElement(empleado);
+	            }
+
+	            // Actualizar el ComboBox empleadosComboBox con el nuevo modelo
+	            empleadosComboBox.setModel(modeloEmpleados);
+	            
 	        }
 	    }
 	});
@@ -363,8 +441,8 @@ public class PantallaTurnos extends Pantalla{
         chartPanel.setBounds(275, 120, 850, 750);  // Puedes cambiar estos valores para ajustar la posición y el tamaño del gráfico
         add(chartPanel);
         
-        JButton btnNewButton_1 = new JButton("Actualizar turno");
-        btnNewButton_1.addActionListener(new ActionListener() {
+        JButton actualizarTurnoButton = new JButton("Actualizar turno");
+        actualizarTurnoButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         	    // Obtén el turno seleccionado del JComboBox
         	        Turno selectedTurno = (Turno) turnosComboBox.getSelectedItem();
@@ -372,18 +450,42 @@ public class PantallaTurnos extends Pantalla{
         	        // Obtén las horas de inicio y fin seleccionadas de los TimePickers
         	        LocalTime horaInicio = inicioTimePicker.getTime();
         	        LocalTime horaFin = finTimePicker.getTime();
+        	        Empleado empleadoSeleccionado = (Empleado) empleadosComboBox.getSelectedItem();
 
         	        // Actualiza las horas de inicio y fin del turno seleccionado
         	        selectedTurno.setHoraInicio(horaInicio);
         	        selectedTurno.setHoraFin(horaFin);
 
         	        // Actualiza el gráfico con los nuevos datos
+        	        selectedTurno.setEmpleado(empleadoSeleccionado);
         	        turnoChart.actualizarChart(turnosDatePicker.getDate());
-        	    
-        	}
+        	        if (empleadoSeleccionado != null) {
+        	            try {
+    			    DAO.insert("UPDATE turnos SET id_empleado= '"+ empleadoSeleccionado.getIdEmpleado()+"', hora_inicio = '"+horaInicio+"', hora_fin = '"+horaFin+"' WHERE id_turno = '" + selectedTurno.getIdTurno()+"'");
+    			    actualizarTablaEmpleados(verEmpleadosDisponiblesArrayList(selectedTurno, plantilla));
+            	        } catch (SQLException e1) {
+    			    // TODO Auto-generated catch block
+    			    e1.printStackTrace();
+    			   
+    			} 
+        	       }else {
+        		   try {
+       			    DAO.insert("UPDATE turnos SET id_empleado=  null, hora_inicio = '"+horaInicio+"', hora_fin = '"+horaFin+"' WHERE id_turno = '" + selectedTurno.getIdTurno()+"'");
+       			    actualizarTablaEmpleados(verEmpleadosDisponiblesArrayList(selectedTurno, plantilla));
+               	        } catch (SQLException e1) {
+       			    // TODO Auto-generated catch block
+       			    e1.printStackTrace();
+               	        	}
+        	
+        	       }
+        		     
+        	}      
+        	       
+        	
+
         });
-        btnNewButton_1.setBounds(45, 670, 167, 23);
-        add(btnNewButton_1);
+        actualizarTurnoButton.setBounds(45, 477, 167, 23);
+        add(actualizarTurnoButton);
 
 	String[] columnNames = {
 		     
@@ -439,8 +541,99 @@ public class PantallaTurnos extends Pantalla{
         
         JLabel labelUltimaPrevision = new JLabel("Prevision cargada hasta :"+fechaUltimaPrevision);
         labelUltimaPrevision.setFont(new Font("Tahoma", Font.BOLD, 12));
-        labelUltimaPrevision.setBounds(45, 56, 241, 14);
+        labelUltimaPrevision.setBounds(46, 46, 241, 14);
         add(labelUltimaPrevision);
+        
+        JLabel labelUltimoTurno = new JLabel("Turnos cargados hasta : "+fechaUltimoTurno);
+        labelUltimoTurno.setHorizontalAlignment(SwingConstants.CENTER);
+        labelUltimoTurno.setFont(new Font("Tahoma", Font.BOLD, 12));
+        labelUltimoTurno.setBounds(45, 67, 229, 14);
+        add(labelUltimoTurno);
+        
+        JLabel lblNewLabel_7 = new JLabel("Seleccionar empleado");
+        lblNewLabel_7.setHorizontalAlignment(SwingConstants.CENTER);
+        lblNewLabel_7.setBounds(45, 396, 167, 14);
+        add(lblNewLabel_7);
+        
+        JButton btnNewButton_2 = new JButton("Crear otro turno");
+        btnNewButton_2.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        	    JTextField idTurnoField = new JTextField();
+        	    DatePicker fechaTurnoPicker = new DatePicker();
+        	    TimePicker horaInicioPicker = new TimePicker();
+        	    TimePicker horaFinPicker = new TimePicker();
+        	    JComboBox<Empleado> crearTurnoEmpleadosComboBox = new JComboBox();
+        	    JComboBox<Funcion> funcionComboBox = new JComboBox<>(Funcion.values());
+        	 
+        	        for (Empleado empleado : plantilla) {
+        	            crearTurnoEmpleadosComboBox.addItem(empleado);
+        	        }
+        	        crearTurnoEmpleadosComboBox.setRenderer(new DefaultListCellRenderer() {
+        	            @Override
+        	            public Component getListCellRendererComponent(JList<?> list, Object value,
+        	                                                          int index, boolean isSelected, boolean cellHasFocus) {
+        	                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        	                if (value instanceof Empleado) {
+        	                    Empleado empleado = (Empleado) value;
+        	                    setText(empleado.getNombre() + " " + empleado.getApellidos());
+        	                } else {
+        	                    setText("no asignar empleado");
+        	                }
+        	                return this;
+        	            }
+        	        });
+        	        Object[] message = {
+        	            "ID del turno:", idTurnoField,
+        	            "Fecha del turno:", fechaTurnoPicker,
+        	            "Hora de inicio:", horaInicioPicker,
+        	            "Hora de fin:", horaFinPicker,
+        	            "Empleado", crearTurnoEmpleadosComboBox,
+        	            "Funcion:", funcionComboBox
+        	        };
+        	        
+        	        int option = JOptionPane.showConfirmDialog(null, message, "Crear turno", JOptionPane.OK_CANCEL_OPTION);
+        	        if (option == JOptionPane.OK_OPTION) {
+        	            String idTurno = idTurnoField.getText();
+        	            LocalDate fechaTurno = fechaTurnoPicker.getDate();
+        	            LocalTime horaInicio = horaInicioPicker.getTime();
+        	            LocalTime horaFin = horaFinPicker.getTime();
+        	            Empleado empleadoSeleccionado = (Empleado) crearTurnoEmpleadosComboBox.getSelectedItem();
+        	            Funcion funcion = (Funcion) funcionComboBox.getSelectedItem();
+        	            ArrayList<String> consulta = null;
+
+        	            try {
+        	                consulta = DAO.selectAndPrint("SELECT * FROM turnos WHERE id_turno = '" + idTurno + "'");
+        	            } catch (SQLException e1) {
+        	                e1.printStackTrace();
+        	            }
+
+        	            try {
+        	                if (consulta != null && !consulta.isEmpty()) {
+        	                    throw new IdTurnoRepetidaExcepcion("El ID del turno ya existe en la base de datos.");
+        	                }
+
+        	                if (!empleadoSeleccionado.puedeTrabajar(fechaTurno)) {
+        	                    throw new EmpleadoNoDisponibleExcepcion("El empleado no puede trabajar en la fecha seleccionada.");
+        	                }
+        	            } catch (IdTurnoRepetidaExcepcion | EmpleadoNoDisponibleExcepcion e2) {
+        	                JOptionPane.showMessageDialog(null, e2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        	                return; // Salir del método sin guardar el turno
+        	            }
+        	            if (horaFin.isBefore(horaInicio)) {
+        	        	    JOptionPane.showMessageDialog(null, "Error: La hora de fin del turno no puede ser anterior a la hora de inicio.", "Error", JOptionPane.ERROR_MESSAGE);
+        	        	    return; // Salir del método sin guardar el turno
+        	        	}
+        	            Turno nuevoTurno = new Turno(idTurno, fechaTurno, horaInicio, horaFin, empleadoSeleccionado, funcion);
+        	            
+        	        }   
+        	}
+        });
+        btnNewButton_2.setBounds(45, 511, 167, 48);
+        add(btnNewButton_2);
+        
+       
+       
+        
     	}
  // Método para actualizar la tabla con los empleados disponibles
     public void actualizarTablaEmpleados(ArrayList<Empleado> empleados) {
@@ -469,16 +662,17 @@ public class PantallaTurnos extends Pantalla{
 
 	    TipoTurno tipoTurno = selectedTurno.getTipoTurno();
 	    LocalDate fecha = selectedTurno.getFechaTurno();
+	    Funcion funcionTurno = selectedTurno.getFuncion();
 
 	    for (Empleado empleado : plantilla) {
 	        switch (tipoTurno) {
 	            case MAÑANA:
-	                if (empleado.isWorkinMañanas(fecha)) {
+	                if (empleado.isWorkinMañanas(fecha)&& empleado.tieneFuncionBoolean(funcionTurno) && empleado.puedeTrabajar(fecha)) {
 	                    empleadosDisponibles.add(empleado);
 	                }
 	                break;
 	            case TARDE:
-	                if (empleado.isWorkinTardes(fecha)) {
+	                if (empleado.isWorkinTardes(fecha)&& empleado.tieneFuncionBoolean(funcionTurno)&& empleado.puedeTrabajar(fecha)) {
 	                    empleadosDisponibles.add(empleado);
 	                }
 	                break;

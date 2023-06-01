@@ -10,6 +10,7 @@ import org.jfree.data.gantt.Task;
 import org.jfree.data.gantt.TaskSeries;
 import org.jfree.data.gantt.TaskSeriesCollection;
 
+import clases.Empleado;
 import clases.Turno;
 import enums.Funcion;
 import enums.TipoTurno;
@@ -75,9 +76,25 @@ public class TurnoChart extends JPanel {
 	    colorMap.put(Funcion.ATTPUBLICO, Color.RED);
 
 	    for (Turno turno : turnos) {
+		    String nombreEmpleado = "";
+		    if (turno != null) {
+		        if (turno.getEmpleado() == null) {
+		            nombreEmpleado = "Sin Empleado";
+		        } else {
+		            if (turno.getEmpleado().getNombre() == null) {
+		                nombreEmpleado = "Sin Nombre";
+		            } else {
+		                nombreEmpleado = "(" + turno.getEmpleado().getNombre() + " " + turno.getEmpleado().getApellidos() + ")";
+		            }
+		        }
+		    } else {
+		        nombreEmpleado = "Turno nulo";
+		    }
+
+		
 	        if (turno.getFechaTurno().isEqual(fecha)) {
 	            ColoredTask task = new ColoredTask(
-	                turno.getIdTurno(),
+	        	"(" + turno.getIdTurno() + ") " + nombreEmpleado,
 	                Date.from(turno.getHoraInicio().atDate(fecha).atZone(ZoneId.systemDefault()).toInstant()),
 	                Date.from(turno.getHoraFin().atDate(fecha).atZone(ZoneId.systemDefault()).toInstant()),
 	                colorMap.get(turno.getFuncion())
@@ -139,6 +156,5 @@ public class TurnoChart extends JPanel {
 }
 
    
-
     
 

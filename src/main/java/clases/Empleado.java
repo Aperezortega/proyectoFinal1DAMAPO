@@ -42,7 +42,7 @@ public class Empleado {
 	        // Aquí puedes establecer los valores predeterminados para este objeto Empleado cuando el idEmpleado es 'null'.
 	        // Dependiendo de cómo quieras manejar este caso, puedes dejar los campos como null, o asignarles algún valor por defecto.
 	    } else {
-	        ArrayList<String> consulta = DAO.select("select * from empleados where `ID Empleado` ='" + idEmpleado + "'");
+	        ArrayList<String> consulta = DAO.select("select * from empleados where id_empleado ='" + idEmpleado + "'");
 	        this.idEmpleado=consulta.get(1);
 	        this.apellidos=consulta.get(2);
 	        this.nombre=consulta.get(3);
@@ -87,7 +87,7 @@ public class Empleado {
 	for (Funcion funcion : funciones) {
             this.funciones.add(funcion);
         }
-	DAO.insert("insert into empleados  (`ID Empleado`, `Apellidos`, `Nombre`, `Email`, `Contraseña`, `Grupo_Empleados`, `Coeficiente_Parcialidad`, `Funcion: Caja`, `Funcion: Almacen`, `Funcion: Atencion_Publico`, `Funcion: Supervisor`, `Usuario:`, `Operacion`)" 
+	DAO.insert("insert into empleados  (id_empleado, Apellidos, Nombre, Email, Contraseña, Grupo_Empleados, Coeficiente_Parcialidad, Funcion_caja, Funcion_almacen, Funcion_atencion_publico, Funcion_supervisor, Usuario, Operacion)" 
 		+ " values('" + idEmpleado + "','" + apellidos + "','" + nombre + "','" + email+"','" + contraseña +"','" + grupo +"','" + coeficienteParcialidad +"','" + tieneFuncion(Funcion.CAJA)+ "','" +tieneFuncion(Funcion.ALMACEN)+"','" +tieneFuncion(Funcion.ATTPUBLICO)+"','" +tieneFuncion(Funcion.SUPERVISOR)+"','"+"user"+"','"+"Alta"+"')");                        
     }
     
@@ -219,8 +219,28 @@ public class Empleado {
      */
     
     
-    
-    
+    public boolean puedeTrabajar(LocalDate fecha) {
+	    String query = "SELECT id_empleado FROM turnos WHERE id_empleado = '" + idEmpleado + "' AND fecha_turno = '" + fecha + "'";
+	    
+	    // Ejecutar la consulta utilizando el método select() de la clase DAO
+	    ArrayList<String> resultadoQuery;
+	    try {
+	        resultadoQuery = DAO.selectAndPrint(query);
+	    } catch (SQLException e) {
+	        // Manejar la excepción de alguna manera adecuada
+	        e.printStackTrace();
+	        return false; // Devolver false en caso de error en la consulta
+	    }
+	    
+	    // Verificar si el resultado de la consulta contiene algún empleado asignado al turno en la fecha especificada
+	    if (resultadoQuery.isEmpty()) {
+	        return true;
+	    } else {
+	        return false;
+	    }
+	}
+
+
     public String getIdEmpleado() {
         return idEmpleado;
     }

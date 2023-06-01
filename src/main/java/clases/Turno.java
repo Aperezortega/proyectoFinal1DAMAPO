@@ -60,9 +60,15 @@ public class Turno {
 	} else {
 	    this.tipoTurno = TipoTurno.TARDE;
 	}
+	try {
+	    DAO.insert("INSERT INTO turnos (id_turno, fecha_turno, hora_inicio, hora_fin, id_empleado, funcion) VALUES ('"+idTurno+"', '"+fechaTurno+"', '"+horaInicio+"', '"+horaFin+"', '"+empleado.getIdEmpleado()+"', '"+funcion+"')");
+	} catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} 
     }
     public Turno(String idTurno, LocalDate fechaTurno, LocalTime horaInicio, LocalTime horaFin,
-	    Funcion funcion) throws SQLException {
+	    Funcion funcion) {
 	super();
 	
 	this.idTurno = idTurno;
@@ -75,7 +81,12 @@ public class Turno {
 	} else {
 	    this.tipoTurno = TipoTurno.TARDE;
 	}
-	DAO.insert("INSERT INTO turnos (id_turno, fecha_turno, hora_inicio, hora_fin, funcion) VALUES ('"+idTurno+"', '"+fechaTurno+"', '"+horaInicio+"', '"+horaFin+"', '"+funcion+"')"); 
+	try {
+	    DAO.insert("INSERT INTO turnos (id_turno, fecha_turno, hora_inicio, hora_fin, funcion) VALUES ('"+idTurno+"', '"+fechaTurno+"', '"+horaInicio+"', '"+horaFin+"', '"+funcion+"')");
+	} catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} 
     }
     
     

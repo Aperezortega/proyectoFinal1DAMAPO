@@ -147,7 +147,7 @@ public abstract class DAO {
 	    ArrayList<String> resultadoQuery = new ArrayList<>();
 	    ArrayList<Empleado> plantilla = new ArrayList<>();
 	    try {
-	        resultadoQuery = DAO.select("SELECT `ID Empleado` FROM empleados");
+	        resultadoQuery = DAO.selectAndPrint("SELECT id_empleado FROM empleados");
 	    } catch (SQLException e1) {
 	        e1.printStackTrace();
 	    }
