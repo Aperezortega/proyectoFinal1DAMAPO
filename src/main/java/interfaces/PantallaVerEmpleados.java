@@ -111,7 +111,7 @@ public class PantallaVerEmpleados extends Pantalla{
 		table_1.setRowSorter(sorter);
 	ArrayList<String> listaEmpleados = new ArrayList<>();
 	try {
-	    listaEmpleados = DAO.select("SELECT `ID Empleado`, `Apellidos`, `Nombre`, `Grupo_Empleados`, `Coeficiente_Parcialidad`, `Funcion: Caja`, `Funcion: Almacen`, `Funcion: Atencion_Publico`, `Funcion: Supervisor`, `fecha` FROM empleados");
+	    listaEmpleados = DAO.select("SELECT `id_empleado`, `Apellidos`, `Nombre`, `Grupo_Empleados`, `Coeficiente_Parcialidad`, `Funcion_caja`, `Funcion_almacen`, `Funcion_atencion_Publico`, `Funcion_supervisor`, `fecha` FROM empleados");
 	} catch (SQLException e1) {
 	    e1.printStackTrace();
 	}

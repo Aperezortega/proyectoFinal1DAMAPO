@@ -12,11 +12,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
 import com.mysql.cj.jdbc.result.ResultSetMetaData;
 
 import clases.Empleado;
 import clases.PrevisionFecha;
 import clases.PrevisionHora;
+import clases.Turno;
 
 
 /* si no se pone static no da error
@@ -161,6 +164,83 @@ public abstract class DAO {
 	    }
 	    
 	    return plantilla;
+	}
+    
+    public static ArrayList<Turno> selectTurnos(LocalDate fechaInicio, LocalDate fechaFin) throws SQLException {
+	    String query = "SELECT id_turno FROM turnos WHERE fecha_turno BETWEEN '"
+	                   + fechaInicio.toString()
+	                   + "' AND '"
+	                   + fechaFin.toString()
+	                   + "'";
+	    ArrayList<String> turnosIdList;
+	    ArrayList<Turno> turnos = new ArrayList<>();
+	    
+	    try {
+	        turnosIdList = DAO.selectAndPrint(query);
+	        
+	        if (turnosIdList.isEmpty()) {
+	            JOptionPane.showMessageDialog(null,
+	                    "No hay turnos generados en el rango de fechas seleccionado",
+	                    "Error",
+	                    JOptionPane.ERROR_MESSAGE);
+	            return turnos; // Agregamos un return para salir del método
+	        }
+	        
+	        for (String idTurno : turnosIdList) {
+	            try {
+	                Turno turno = new Turno(idTurno);
+	                // Aquí puedes hacer lo que necesites con el turno
+	                // Por ejemplo, podrías agregarlo a tu lista de turnos
+	                turnos.add(turno);
+	            } catch (SQLException e1) {
+	                e1.printStackTrace();
+	            }
+	        }
+	    } catch (SQLException e1) {
+	        e1.printStackTrace();
+	    }
+	    
+	    return turnos;
+	}
+
+    public static ArrayList<Turno> selectTurnosDe(LocalDate fechaInicio, LocalDate fechaFin,Empleado empleado) throws SQLException {
+	    String query = "SELECT id_turno FROM turnos WHERE fecha_turno BETWEEN '"
+	                   + fechaInicio.toString()
+	                   + "' AND '"
+	                   + fechaFin.toString()
+	                   + "' AND id_empleado = '"
+	                   + empleado.getIdEmpleado()
+	                   + "'";
+	    
+	    ArrayList<String> turnosIdList;
+	    ArrayList<Turno> turnos = new ArrayList<>();
+	    
+	    try {
+	        turnosIdList = DAO.selectAndPrint(query);
+	        
+	        if (turnosIdList.isEmpty()) {
+	            JOptionPane.showMessageDialog(null,
+	                    "No hay turnos generados en el rango de fechas seleccionado",
+	                    "Error",
+	                    JOptionPane.ERROR_MESSAGE);
+	            return turnos; // Agregamos un return para salir del método
+	        }
+	        
+	        for (String idTurno : turnosIdList) {
+	            try {
+	                Turno turno = new Turno(idTurno);
+	                // Aquí puedes hacer lo que necesites con el turno
+	                // Por ejemplo, podrías agregarlo a tu lista de turnos
+	                turnos.add(turno);
+	            } catch (SQLException e1) {
+	                e1.printStackTrace();
+	            }
+	        }
+	    } catch (SQLException e1) {
+	        e1.printStackTrace();
+	    }
+	    
+	    return turnos;
 	}
 
 

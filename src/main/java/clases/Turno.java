@@ -1,6 +1,7 @@
 package clases;
 
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -18,6 +19,9 @@ public class Turno {
     private Empleado empleado;
     private Funcion funcion;
     private TipoTurno tipoTurno;
+    private LocalTime checkIn;
+    private LocalTime checkOut;
+    private boolean validado;
     /**
      * @param idTurno
      * @param fechaTurno
@@ -38,6 +42,13 @@ public class Turno {
 	    }
 	    this.empleado = new Empleado(consulta.get(5));
 	    this.funcion = Funcion.valueOf(consulta.get(6));
+	    if(consulta.get(7)!=null) {
+		this.checkIn= LocalTime.parse(consulta.get(7));
+	    }
+	    if(consulta.get(8)!=null) {
+		this.checkOut= LocalTime.parse(consulta.get(8));
+	    }
+	    
 	    if (horaInicio.getHour() >= 10 && horaInicio.getHour() < 14) {
 		    this.tipoTurno = TipoTurno.MAÑANA;
 		} else {
@@ -186,6 +197,56 @@ public class Turno {
             return idTurnoFormateado + empleado.getNombre() + "-" + horaInicio + "-"+ horaFin ; 
         }
     }
+
+
+    /**
+     * @return the checkin
+     */
+    public LocalTime getCheckIn() {
+        return checkIn;
+    }
+
+
+    /**
+     * @param checkin the checkin to set
+     */
+    public void setCheckIn(LocalTime checkin) {
+        this.checkIn = checkin;
+    }
+
+
+    /**
+     * @return the checkout
+     */
+    public LocalTime getCheckOut() {
+        return checkOut;
+    }
+
+
+    /**
+     * @param checkout the checkout to set
+     */
+    public void setCheckOut(LocalTime checkout) {
+        this.checkOut = checkout;
+    }
+
+
+    public long getHorasTrabajadas(LocalTime checkIn, LocalTime checkOut) {
+	    if (checkIn == null || checkOut == null) {
+	        // Decide cómo manejar esta situación. Podrías devolver cero,
+	        // lanzar una excepción, registrar un mensaje de error, etc.
+	        return 0;
+	    }
+
+	    Duration duration = Duration.between(checkIn, checkOut);
+	    long horasTrabajadas = duration.toHours();
+	    return horasTrabajadas;
+	}
+
+
+
+
+  
 
     }
     
