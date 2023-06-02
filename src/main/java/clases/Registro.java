@@ -1,7 +1,10 @@
 package clases;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import utils.DAO;
 
 public class Registro {
     private Empleado empleado;
@@ -10,7 +13,10 @@ public class Registro {
     private LocalTime horaFin;
     private LocalTime checkIn;
     private LocalTime checkOut;
-    private int horasTrabajadas;
+    private float horasBase;
+    private float horasComplementarias;
+    private float horasVacaciones;
+    private float horasAusencia;
     /**
      * @param empleado
      * @param fecha
@@ -20,17 +26,9 @@ public class Registro {
      * @param checkOut
      * @param horasTrabajadas
      */
-    public Registro(Empleado empleado, LocalDate fecha, LocalTime horaInicio, LocalTime horaFin, LocalTime checkIn,
-	    LocalTime checkOut, int horasTrabajadas) {
-	super();
-	this.empleado = empleado;
-	this.fecha = fecha;
-	this.horaInicio = horaInicio;
-	this.horaFin = horaFin;
-	this.checkIn = checkIn;
-	this.checkOut = checkOut;
-	this.horasTrabajadas = horasTrabajadas;
-    }
+  
+    
+    
     /**
      * @return the empleado
      */
@@ -38,10 +36,61 @@ public class Registro {
         return empleado;
     }
     /**
-     * @param empleado the empleado to set
+     * @param empleado
+     * @param fecha
+     * @param horaInicio
+     * @param horaFin
+     * @param checkIn
+     * @param checkOut
+     * @param horasBase
+     * @param horasComplementarias
+     * @param horasVacaciones
+     * @param horasAusencia
      */
-    public void setEmpleado(Empleado empleado) {
-        this.empleado = empleado;
+   
+    public Registro(Empleado empleado, LocalDate fecha) {
+	super();
+	
+	this.empleado = empleado;
+	this.fecha = fecha;
+	this.horaInicio = horaInicio;
+	this.horaFin = horaFin;
+	this.checkIn = checkIn;
+	this.checkOut = checkOut;
+	this.horasBase = horasBase;
+	this.horasComplementarias = horasComplementarias;
+	this.horasVacaciones = horasVacaciones;
+	this.horasAusencia = horasAusencia;
+	try {
+	    DAO.insert("INSERT INTO horas (id_empleado, fecha, horas_base, horas_complementarias, horas_vacaciones, horas_ausencia) " +
+	            "VALUES ('" +empleado.getIdEmpleado()  + "', '" + fecha+ "', '" + horasBase+ "', '" + horasComplementarias + "', '" + horasVacaciones+ "', '" +horasAusencia + "')");
+	} catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+    }
+    
+    public Registro(Empleado empleado, LocalDate fecha, LocalTime horaInicio, LocalTime horaFin, LocalTime checkIn,
+	    LocalTime checkOut, float horasBase, float horasComplementarias,
+	    float horasVacaciones, float horasAusencia) {
+	super();
+	this.empleado = empleado;
+	this.fecha = fecha;
+	this.horaInicio = horaInicio;
+	this.horaFin = horaFin;
+	this.checkIn = checkIn;
+	this.checkOut = checkOut;
+	this.horasBase = horasBase;
+	this.horasComplementarias = horasComplementarias;
+	this.horasVacaciones = horasVacaciones;
+	this.horasAusencia = horasAusencia;
+	try {
+	    DAO.insert("INSERT INTO horas (id_empleado, fecha, horas_base, horas_complementarias, horas_vacaciones, horas_ausencia) " +
+	            "VALUES ('" +empleado.getIdEmpleado()  + "', '" + fecha+ "', '" + horasBase+ "', '" + horasComplementarias + "', '" + horasVacaciones+ "', '" +horasAusencia + "')");
+	} catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
     }
     /**
      * @return the fecha
@@ -104,25 +153,67 @@ public class Registro {
         this.checkOut = checkOut;
     }
     /**
-     * @return the horasTrabajadas
+     * @return the horasBase
      */
-    public int getHorasTrabajadas() {
-        return horasTrabajadas;
+    public float getHorasBase() {
+        return horasBase;
     }
     /**
-     * @param horasTrabajadas the horasTrabajadas to set
+     * @param horasBase the horasBase to set
      */
-    public void setHorasTrabajadas(int horasTrabajadas) {
-        this.horasTrabajadas = horasTrabajadas;
+    public void setHorasBase(float horasBase) {
+        this.horasBase = horasBase;
+    }
+    /**
+     * @return the horasComplementarias
+     */
+    public float getHorasComplementarias() {
+        return horasComplementarias;
+    }
+    /**
+     * @param horasComplementarias the horasComplementarias to set
+     */
+    public void setHorasComplementarias(float horasComplementarias) {
+        this.horasComplementarias = horasComplementarias;
+    }
+    /**
+     * @return the horasVacaciones
+     */
+    public float getHorasVacaciones() {
+        return horasVacaciones;
+    }
+    /**
+     * @param horasVacaciones the horasVacaciones to set
+     */
+    public void setHorasVacaciones(float horasVacaciones) {
+        this.horasVacaciones = horasVacaciones;
+    }
+    /**
+     * @return the horasAusencia
+     */
+    public float getHorasAusencia() {
+        return horasAusencia;
+    }
+    /**
+     * @param horasAusencia the horasAusencia to set
+     */
+    public void setHorasAusencia(float horasAusencia) {
+        this.horasAusencia = horasAusencia;
+    }
+    /**
+     * @param empleado the empleado to set
+     */
+    public void setEmpleado(Empleado empleado) {
+        this.empleado = empleado;
     }
     @Override
     public String toString() {
 	return "Registro [empleado=" + empleado + ", fecha=" + fecha + ", horaInicio=" + horaInicio + ", horaFin="
-		+ horaFin + ", checkIn=" + checkIn + ", checkOut=" + checkOut + ", horasTrabajadas=" + horasTrabajadas
-		+ "]";
+		+ horaFin + ", checkIn=" + checkIn + ", checkOut=" + checkOut + ", horasBase=" + horasBase
+		+ ", horasComplementarias=" + horasComplementarias + ", horasVacaciones=" + horasVacaciones
+		+ ", horasAusencia=" + horasAusencia + "]";
     }
-
-
+    
     
     
     

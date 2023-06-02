@@ -52,8 +52,18 @@ public class Turno {
             this.tipoTurno = TipoTurno.MAÑANA;
         } else {
             this.tipoTurno = TipoTurno.TARDE;
+        	}
+        
+        String validacion = consulta.get(9);
+        if(validacion.equalsIgnoreCase("1")) {
+            this.validado=true;
         }
-    }
+    
+       }
+           
+  
+
+    
 
     /**
      * Constructor de Turno con todos los parámetros.
@@ -308,5 +318,24 @@ public class Turno {
             return idTurnoFormateado + empleado.getNombre() + "-" + horaInicio + "-" + horaFin;
         }
     }
+
+
+
+    /**
+     * @return the validado
+     */
+    public boolean isValidado() {
+        return validado;
+    }
+
+
+
+    /**
+     * @param validado the validado to set
+     */
+    public void setValidado(boolean validado) {
+        this.validado = validado;
+    }
+    
 }
 

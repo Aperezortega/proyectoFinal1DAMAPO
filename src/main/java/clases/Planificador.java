@@ -16,23 +16,16 @@ import java.util.List;
 import enums.Funcion;
 import enums.TipoTurno;
     
-/**
- * Clase Planificador que se encarga de generar turnos en base a una prevision cargada previamente en el sistema y unas directrices
- * de empleados necesarios para una prevision..
- */
-public class Planificador {
-
-    private PrevisionFecha prevision;
-    private ArrayList<Empleado> listaEmpleados;
-    private List<Turno> listaTurnos;
-    private static ArrayList<RequerimientosEmpleados> requerimientos;
-    private static final String csvFile = "requisitos.csv";
-
-    /**
-     * Constructor de la clase Planificador.
-     * En realidad solo necesitamos los metodos del planificador.
-     */
-    public Planificador() {
+    public  class Planificador {
+        
+        private PrevisionFecha prevision;
+        private ArrayList<Empleado> listaEmpleados;
+        private List<Turno> listaTurnos;
+        private static ArrayList<RequerimientosEmpleados> requerimientos;
+        private static final String csvFile = "requisitos.csv";
+        
+        
+        public Planificador() {
             
         }
         /**
@@ -51,12 +44,6 @@ public class Planificador {
     	this.listaTurnos = listaTurnos;
         }
     
-        /**
-         * Este constructor de 
-         * @param prevision
-         * @throws IOException
-         * @throws SQLException
-         */
         public Planificador (PrevisionFecha prevision) throws IOException, SQLException {
         super();
         if(requerimientos==null) {
@@ -208,7 +195,46 @@ public class Planificador {
             return empleadosDisponibles;
         } 
         
-     
+        
+        
+        
+        
+        /*
+        public ArrayList<Empleado> verEmpleadosDisponibles(String idTurno, ArrayList<Empleado> plantilla) {
+            ArrayList<Empleado> empleadosDisponibles = new ArrayList<Empleado>();
+            for (Turno turno : listaTurnos) {
+                if (turno.getIdTurno().equals(idTurno)) {
+                   TipoTurno tipoTurno = turno.getTipoTurno();
+                   LocalDate fecha =turno.getFechaTurno();
+                   for( Empleado e: plantilla) {
+                       switch (tipoTurno){
+                       
+                       	case MAÑANA:
+                       	if(e.isWorkinMañanas(fecha)) {
+                 	   empleadosDisponibles.add(e);
+                       	}
+                       	    break;
+                       
+                       case TARDE:
+                	   if(e.isWorkinTardes(fecha)) {
+                     	   empleadosDisponibles.add(e);
+                           	}
+                	   break;
+                
+                       }
+                       
+                       
+                       
+                       }
+                       
+                   }
+                   
+            
+                }
+            return empleadosDisponibles; 
+        }
+          */
+        
         
         private byte calcularNumCajeros(int visitas) throws IOException {
             if(requerimientos==null) {

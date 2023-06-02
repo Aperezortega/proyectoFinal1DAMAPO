@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
@@ -25,11 +26,13 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import com.github.lgooddatepicker.components.DatePicker;
 
 import clases.Empleado;
+import clases.Registro;
 import clases.Turno;
 import utils.DAO;
 import java.awt.event.MouseAdapter;
@@ -87,9 +90,11 @@ public class PantallaTAndA extends Pantalla {
         modeloTabla = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
-                if (column == 0 || column == 1 || column == 2 || column == 5) {
-                    return false;
-                } else {
+        	 if((boolean) getValueAt(row, 10)) {
+        	     return false;
+        	 }else if (column == 0 || column == 1 || column == 2 || column == 5) {
+                     return false;
+                }else {
                     return true;
                 }
             }
@@ -125,8 +130,49 @@ public class PantallaTAndA extends Pantalla {
         });
 
         tabla = new JTable(modeloTabla);
+     // ...
+
+        tabla = new JTable(modeloTabla) {
+            @Override
+            public TableCellRenderer getCellRenderer(int row, int column) {
+                if (column == 5) {
+                    // Columna "Horas trabajadas"
+                    return new TableCellRenderer() {
+                        @Override
+                        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                            // Obtener los valores de las columnas siguientes
+                            Object horasBase = modeloTabla.getValueAt(row, 6);
+                            Object horasComplementarias = modeloTabla.getValueAt(row, 7);
+
+                            // Calcular la suma de las columnas
+                            float sumaHoras = 0;
+                            if (horasBase instanceof Float) {
+                                sumaHoras += (Float) horasBase;
+                            }
+                            if (horasComplementarias instanceof Float) {
+                                sumaHoras += (Float) horasComplementarias;
+                            }
+
+                            // Crear un JLabel para mostrar el resultado
+                            JLabel label = new JLabel(String.valueOf(sumaHoras));
+                            label.setHorizontalAlignment(SwingConstants.RIGHT);
+
+                            return label;
+                        }
+                    };
+                } else {
+                    // Otros casos, usar el renderer por defecto
+                    return super.getCellRenderer(row, column);
+                }
+            }
+        };
         scrollPane.setViewportView(tabla);
 
+        // ...
+
+        
+        tabla.getTableHeader().setReorderingAllowed(false);
+        
         empleadosComboBox = new JComboBox<>();
         empleadosComboBox.addMouseListener(new MouseAdapter() {
             @Override
@@ -239,11 +285,41 @@ public class PantallaTAndA extends Pantalla {
                                 modeloTabla.getValueAt(i, 7),
                                 modeloTabla.getValueAt(i, 8),
                                 modeloTabla.getValueAt(i, 9)
+                                
                         });
+                        Empleado empleado = (Empleado) empleadosComboBox.getSelectedItem();
+                        LocalDate fecha = (LocalDate) modeloTabla.getValueAt(i, 0);
+                        LocalTime horaInicio = (LocalTime) modeloTabla.getValueAt(i, 1);
+                        LocalTime horaFin = (LocalTime) modeloTabla.getValueAt(i, 2);
+                        LocalTime checkIn = (LocalTime) modeloTabla.getValueAt(i, 3);
+                        LocalTime checkOut = (LocalTime) modeloTabla.getValueAt(i, 4);
+                        float horasBase = modeloTabla.getValueAt(i, 6).toString().isEmpty() ? 0.0f : Float.parseFloat(modeloTabla.getValueAt(i, 6).toString());
+                        float horasComplementarias = modeloTabla.getValueAt(i, 7).toString().isEmpty() ? 0.0f : Float.parseFloat(modeloTabla.getValueAt(i, 7).toString());
+                        float horasVacaciones = modeloTabla.getValueAt(i, 8).toString().isEmpty() ? 0.0f : Float.parseFloat(modeloTabla.getValueAt(i, 8).toString());
+                        float horasAusencia = modeloTabla.getValueAt(i, 9).toString().isEmpty() ? 0.0f : Float.parseFloat(modeloTabla.getValueAt(i, 9).toString());
+
+
+                        Registro registro = new Registro(empleado, fecha, horaInicio, horaFin, checkIn, checkOut,
+                                horasBase, horasComplementarias, horasVacaciones, horasAusencia);
+
+                      
+                        
+                        // Crear la consulta SQL
+                        String idEmpleado = ((Empleado) empleadosComboBox.getSelectedItem()).getIdEmpleado();
+                        LocalDate fechaTurno = (LocalDate)modeloTabla.getValueAt(i, 0);
+                        String fechaTurnoStr = fechaTurno != null ? fechaTurno.toString() : null;
+                        String query = String.format("UPDATE turnos SET validado = 1 WHERE id_empleado = '%s' AND fecha_turno = '%s'",
+                                idEmpleado, fechaTurnoStr);
+
+                        // Ejecutar la consulta
+                        try {
+                            DAO.insert(query);
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
                     }
                 }
-                modeloTabla.setRowCount(0);
-                
+                //modeloTabla.setRowCount(0);
             }
         });
         btnNewButton.setBounds(54, 191, 167, 23);
@@ -257,26 +333,33 @@ public class PantallaTAndA extends Pantalla {
     
 
     private void actualizarTabla() {
-        LocalDate fechaInicio = inicioDatePicker.getDate();
-        LocalDate fechaFin = finDatePicker.getDate();
-        Empleado empleado = (Empleado) empleadosComboBox.getSelectedItem();
+	    LocalDate fechaInicio = inicioDatePicker.getDate();
+	    LocalDate fechaFin = finDatePicker.getDate();
+	    Empleado empleado = (Empleado) empleadosComboBox.getSelectedItem();
 
-        if (fechaInicio != null && fechaFin != null && empleado != null) {
-            modeloTabla.setRowCount(0);
+	    if (fechaInicio != null && fechaFin != null && empleado != null) {
+	        modeloTabla.setRowCount(0);
 
-            try {
-                ArrayList<Turno> turnos = DAO.selectTurnosDe(fechaInicio, fechaFin, empleado);
+	        try {
+	            ArrayList<Turno> turnos = DAO.selectTurnosDe(fechaInicio, fechaFin, empleado);
+	            
+	            for (Turno turno : turnos) {
+	                modeloTabla.addRow(new Object[]{
+	                        turno.getFechaTurno(), turno.getHoraInicio(), turno.getHoraFin(),
+	                        turno.getCheckIn(), turno.getCheckOut(), turno.getHorasTrabajadas(turno.getCheckIn(), turno.getCheckOut()),
+	                        "", "", "", "", turno.isValidado()
+	                });
+	            }
 
-                for (Turno turno : turnos) {
-                    modeloTabla.addRow(new Object[]{
-                            turno.getFechaTurno(), turno.getHoraInicio(), turno.getHoraFin(),
-                            turno.getCheckIn(), turno.getCheckOut(), turno.getHorasTrabajadas(turno.getCheckIn(), turno.getCheckOut()),
-                            "", "","", "", false
-                    });
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	            // Establecer el valor de validado en el modelo de la tabla
+	            for (int i = 0; i < modeloTabla.getRowCount(); i++) {
+	                boolean validado = turnos.get(i).isValidado();
+	                modeloTabla.setValueAt(validado, i, 10);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+
 }

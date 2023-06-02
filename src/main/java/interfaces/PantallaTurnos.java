@@ -222,6 +222,10 @@ public class PantallaTurnos extends Pantalla{
                         turnoChart.getChart().setTitle(chartTitle);
 
                         actualizarTablaEmpleados(verEmpleadosDisponiblesArrayList(selectedTurno,plantilla));
+                        if(fechaUltimoTurno==null) {
+                            fechaUltimoTurno = finDatePicker.getDate();
+                           
+                        }
                     });
                 } else {
                     String query = "select id_turno from turnos where fecha_turno between '"
@@ -267,6 +271,10 @@ public class PantallaTurnos extends Pantalla{
                     turnoChart.getChart().setTitle(chartTitle);
 
                     actualizarTablaEmpleados(verEmpleadosDisponiblesArrayList(selectedTurno,plantilla));
+                    if(fechaUltimoTurno==null) {
+                        fechaUltimoTurno = finDatePicker.getDate();
+                   }
+                    
                 }
             } // Cierre de la función actionPerformed
         }); // Cierre de la clase anónima ActionListener

@@ -1,7 +1,6 @@
 package clases;
 
 import java.sql.SQLException;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,33 +17,30 @@ import exceptions.ContraseñaInvalidaExcepcion;
 import exceptions.UsuarioNoExisteExcepcion;
 import utils.DAO;
 
-
-/**
- * 
- * @author 1DAM&&1DAW
- *Esta clase representa un empleado de la empresa
- */
 public class Empleado {
     
-    private String idEmpleado; 
+    private String idEmpleado;
     private String apellidos;
-    private String nombre; 
-    private String email; 
-    private String contraseña; 
-    private GruposEmpleados grupo; 
-    private Float coeficienteParcialidad; // representa el porcentaje de horas semanales con respecto a una jornada completa siendo 0.5 20h semanales
-    private EnumSet<Funcion> funciones; // Conjunto de funciones que el empleado puede realiza
+    private String nombre;
+    private String email;
+    private String contraseña;
+    private GruposEmpleados grupo;
+    private Float coeficienteParcialidad;
+    private EnumSet<Funcion> funciones;
   
     /**
-     * 	Construye un objeto Empleado con un identificador de empleado.
-     * esta version del constructor se usa sacar a un empleado de la base de datos.
-     * lo primero que hace es hacer un query en la base de datos con DAO.Select, despues coje los elementos de la query y los añade al objeto empleado
-     * @param idEmpleado el identificador único para el empleado.
-     * @throws SQLException  si hay un error con la operación SQL.
+     * @param idEmpleado
+     * @param nombre
+     * @param horasComplementarias
+     * @param horasVacaciones
+     * @param horasBaseContrato
+     * @param funciones
+     * @throws SQLException 
      */
     public Empleado(String idEmpleado) throws SQLException {
-	    if (idEmpleado == null || idEmpleado.equalsIgnoreCase("null")) { //este condicional se usa para evitar un error con los parse de abajo
-	        
+	    if (idEmpleado == null || idEmpleado.equalsIgnoreCase("null")) {
+	        // Aquí puedes establecer los valores predeterminados para este objeto Empleado cuando el idEmpleado es 'null'.
+	        // Dependiendo de cómo quieras manejar este caso, puedes dejar los campos como null, o asignarles algún valor por defecto.
 	    } else {
 	        ArrayList<String> consulta = DAO.select("select * from empleados where id_empleado ='" + idEmpleado + "'");
 	        this.idEmpleado=consulta.get(1);
@@ -54,17 +50,11 @@ public class Empleado {
 	        this.contraseña=consulta.get(5);
 	        this.grupo=GruposEmpleados.valueOf(consulta.get(6));
 	        this.coeficienteParcialidad=Float.parseFloat(consulta.get(7));
-	        
-	        /*PARA LAS FUNCIONES*
-	         * las funciones se guardan como un enumSet. En la tabla de la base de datos cada funcion tiene su columa.
-	         * En la base de datos no se admiten booleans  por lo que true es 1 y false 0. 
-	         * las siguientes lineas se ocupan de comprobar y añadir las funciones al empleado
-	         */
 	        Byte skill1=Byte.parseByte(consulta.get(8));
 	        Byte skill2=Byte.parseByte(consulta.get(9));
 	        Byte skill3=Byte.parseByte(consulta.get(10));
 	        Byte skill4=Byte.parseByte(consulta.get(11));
-	        List<Funcion> funcionesList = new ArrayList<Funcion>(); 
+	        List<Funcion> funcionesList = new ArrayList<Funcion>();
 	        if (skill1==1) {
 	            funcionesList.add(Funcion.CAJA);
 	        }
@@ -78,25 +68,12 @@ public class Empleado {
 	            funcionesList.add(Funcion.SUPERVISOR);
 	        }
 
-	        
+	        // Convertir la lista a un array.
 	        
 	        this.funciones=EnumSet.copyOf(funcionesList);
 	    }
 	}
 
-    
-    /**
-     * La version clasica del constructor con todos sus argumentos. se genera un objeto empleado y por ultimo se inserta en la base de datos
-     * @param idEmpleado
-     * @param apellidos
-     * @param nombre
-     * @param email
-     * @param contraseña
-     * @param grupo
-     * @param coeficienteParcialidad
-     * @param funciones
-     * @throws SQLException
-     */
     public Empleado(String idEmpleado, String apellidos, String nombre, String email, String contraseña, GruposEmpleados grupo, Float coeficienteParcialidad, Funcion...funciones) throws SQLException{
 	super();
 	this.idEmpleado = idEmpleado;
@@ -114,18 +91,6 @@ public class Empleado {
 		+ " values('" + idEmpleado + "','" + apellidos + "','" + nombre + "','" + email+"','" + contraseña +"','" + grupo +"','" + coeficienteParcialidad +"','" + tieneFuncion(Funcion.CAJA)+ "','" +tieneFuncion(Funcion.ALMACEN)+"','" +tieneFuncion(Funcion.ATTPUBLICO)+"','" +tieneFuncion(Funcion.SUPERVISOR)+"','"+"user"+"','"+"Alta"+"')");                        
     }
     
-    
-    
-    /**
-     * Esta version del constructor se usa para hacer login en la aplicacion.
-     * primero hace una consulta en la base de datos para comprobar si el usuario introducido existe. Si no hace un throw. UsuarioNoExisteExcepcion
-     * Si existe, comprueba si la contraseña introducida coincide con la de la base de datos. Si no,hace un throw ContraseñaInvalidaExcepcion
-     * @param email
-     * @param pass
-     * @throws SQLException
-     * @throws UsuarioNoExisteExcepcion
-     * @throws ContraseñaInvalidaExcepcion
-     */
     public Empleado(String email, String pass) throws SQLException, UsuarioNoExisteExcepcion, ContraseñaInvalidaExcepcion {
    	super();
    	ArrayList<String>consulta = DAO.select("select * from empleados where email ='"+email +"'");
@@ -138,8 +103,6 @@ public class Empleado {
    	this.idEmpleado=consulta.get(1);
    	this.apellidos=consulta.get(2);
    	this.nombre=consulta.get(3);
-   	
-   /*todo esto no hace falta en este constructor
    	this.email = consulta.get(4);
    	this.grupo =GruposEmpleados.valueOf(consulta.get(6));
    	this.coeficienteParcialidad=Float.parseFloat(consulta.get(7));
@@ -164,92 +127,58 @@ public class Empleado {
              // Convertir la lista a un array.
              
 	this.funciones=EnumSet.copyOf(funcionesList);
-   	*/
+   	
        }
     
-    /**
-     * metodo para comprobar si el empleado tiene una determinada funcion.
-     * @param funcion la funcion, puede ser cualquier valor del enum funciones.
-     * @return este metodo esta adaptado para insertar los datos en a db. Como no admite boolean, devuelve 1 o 0
-     */
     public byte tieneFuncion(Funcion funcion) {
-        if (funciones.contains(funcion)) {
-            return 1;
-        } else {
-            return 0;
-        }
+	if(funciones.contains(funcion)) {
+	    return 1;
+	}else {
+	return 0;
+	}
     }
-
-    /**
-     * el mismo metodo anterior pero preparado para que devuelva un boolean. Esta version del meto es para su uso en java.
-     * @param funcion
-     * @return
-     */
     public boolean tieneFuncionBoolean(Funcion funcion) {
-        if (funciones.contains(funcion)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * metodo para comprobar si el empleado pertenece a un grupo de empleados u a otro
-     * @param grupoEmpleado
-     * @return
-     */
+   	if(funciones.contains(funcion)) {
+   	    return true;
+   	}else {
+   	return false;
+   	}
+       }
+    
     public boolean perteneceAGrupo(GruposEmpleados grupoEmpleado) {
-        if (this.getGrupo().equals(grupoEmpleado)) {
-            return true;
-        } else {
-            return false;
-        }
+	if(this.getGrupo().equals(grupoEmpleado)) {
+	    return true;
+	}else {
+	return false;
+	}
+    }
+    
+    public void añadirfuncion(Funcion funcion) {
+	funciones.add(funcion);
+    }
+    
+    
+    public void eliminarfuncion(Funcion funcion) {
+	funciones.remove(funcion);
     }
 
-    
-  
-    
-    
+    public float getHorasComplementarias(Float horasBase) {
+	float ret = 0;
+	return ret;
+    }
+
    
-/**
- * metodo para calcular cuantas horas complementaria el trabajador podria realizar como maximo en base a sus horas bases
- * @param coeficienteParcialidad
- * @return
- */
-    public float getHorasComplementarias(Float coeficienteParcialidad) {
+    public float getHorasVacaciones(Float horasBase) {
 	float ret = 0;
 	return ret;
     }
 
-   /**
-    *  metodo para calcular cuantas horas de vacaciones le corresponden al trabajador en base a sus horas bases
-    * @param coeficienteParcialidad
-    * @return
-    */
-    public float getHorasVacaciones(Float coeficienteParcialidad) {
-	float ret = 0;
-	return ret;
-    }
-
-    public Float getHorasBaseContrato() {
-        Float horasBase =(40*coeficienteParcialidad);
-	return horasBase;
-    }
-
-    /**
-     * este metodo sirve para comprobar si al empleado le corresponderia trabajar en turno de mañana dada la fecha
-     * la idea general sobre los grupos y los turnos trabajados se escuentran en en el enum GruposEMpleados
-     * Si es domingo devuelve false. El domingo no abre el negocio. Despues hace un switch con el dia de la semana que corresponde
-     * a la fecha seleccionada. El return es una comparacion del grupo actual del empleado vs el grupo al que le toca trabajar que devuelve true or false
-     * 
-     * @param fecha
-     * @return
-     */
+    
     public boolean isWorkinMañanas(LocalDate fecha) {
 	    if (fecha.getDayOfWeek() == DayOfWeek.SUNDAY) {
 	        return false;
 	    }
-	    
+
 	    switch (fecha.getDayOfWeek()) {
 	        case MONDAY:
 	        case TUESDAY:
@@ -264,15 +193,7 @@ public class Empleado {
 	            throw new IllegalArgumentException("Día de la semana no válido: " + fecha.getDayOfWeek());
 	    }
 	}
-    /**
-     * este metodo sirve para comprobar si al empleado le corresponderia trabajar en turno de tarde dada la fecha
-     * la idea general sobre los grupos y los turnos trabajados se escuentran en en el enum GruposEMpleados
-     * Si es domingo devuelve false. El domingo no abre el negocio. Despues hace un switch con el dia de la semana que corresponde
-     * a la fecha seleccionada. El return es una comparacion del grupo actual del empleado vs el grupo al que le toca trabajar que devuelve true or false
-     * 
-     * @param fecha
-     * @return
-     */
+    
     public boolean isWorkinTardes(LocalDate fecha) {
 	    if (fecha.getDayOfWeek() == DayOfWeek.SUNDAY) {
 	        return false;
@@ -293,24 +214,22 @@ public class Empleado {
 	    }
 	}
     
-    
     /**
-     * Este metodo comprueba que el trabajador  no tenga ningun turno asignado ya en la base de datos para el parametro fecha
-     * primero hace una consulta. Si la consulta sale vacia devuelve true 
-     * @param fecha
-     * @return
+     * @return the idEmpleado
      */
+    
+    
     public boolean puedeTrabajar(LocalDate fecha) {
 	    String query = "SELECT id_empleado FROM turnos WHERE id_empleado = '" + idEmpleado + "' AND fecha_turno = '" + fecha + "'";
 	    
-	    
+	    // Ejecutar la consulta utilizando el método select() de la clase DAO
 	    ArrayList<String> resultadoQuery;
 	    try {
 	        resultadoQuery = DAO.selectAndPrint(query);
 	    } catch (SQLException e) {
-	      
+	        // Manejar la excepción de alguna manera adecuada
 	        e.printStackTrace();
-	        return false; 
+	        return false; // Devolver false en caso de error en la consulta
 	    }
 	    
 	    // Verificar si el resultado de la consulta contiene algún empleado asignado al turno en la fecha especificada
@@ -323,86 +242,127 @@ public class Empleado {
 
 
     public String getIdEmpleado() {
-		return idEmpleado;
-	}
+        return idEmpleado;
+    }
 
+    /**
+     * @return the apellidos
+     */
+    public String getApellidos() {
+        return apellidos;
+    }
 
-	public void setIdEmpleado(String idEmpleado) {
-		this.idEmpleado = idEmpleado;
-	}
+    /**
+     * @param apellidos the apellidos to set
+     */
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
+    }
 
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
 
-	public String getApellidos() {
-		return apellidos;
-	}
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
+    /**
+     * @return the contraseña
+     */
+    public String getContraseña() {
+        return contraseña;
+    }
 
-	public void setApellidos(String apellidos) {
-		this.apellidos = apellidos;
-	}
+    /**
+     * @param contraseña the contraseña to set
+     */
+    public void setContraseña(String contraseña) {
+        this.contraseña = contraseña;
+    }
 
+    /**
+     * @return the coeficienteParcialidad
+     */
+    public Float getCoeficienteParcialidad() {
+        return coeficienteParcialidad;
+    }
 
-	public String getNombre() {
-		return nombre;
-	}
+    /**
+     * @param coeficienteParcialidad the coeficienteParcialidad to set
+     */
+    public void setCoeficienteParcialidad(Float coeficienteParcialidad) {
+        this.coeficienteParcialidad = coeficienteParcialidad;
+    }
 
+    /**
+     * @param idEmpleado the idEmpleado to set
+     */
+    public void setIdEmpleado(String idEmpleado) {
+        this.idEmpleado = idEmpleado;
+    }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    /**
+     * @return the nombre
+     */
+    public String getNombre() {
+        return nombre;
+    }
 
+    /**
+     * @param nombre the nombre to set
+     */
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    /**
+     * @return the horasBaseContrato
+     */
+    public Float getHorasBaseContrato() {
+        Float horasBase =(40*coeficienteParcialidad);
+	return horasBase;
+    }
 
+    /**
+     * @param horasBaseContrato the horasBaseContrato to set
+     */ 
+    
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    /**
+     * @return the funciones
+     */
+    public EnumSet<Funcion> getFunciones() {
+        return funciones;
+    }
 
+    /**
+     * @param funciones the funciones to set
+     */
+    public void setFunciones(EnumSet<Funcion> funciones) {
+        this.funciones = funciones;
+    }
 
-	public String getContraseña() {
-		return contraseña;
-	}
+    /**
+     * @return the grupo
+     */
+    public GruposEmpleados getGrupo() {
+        return grupo;
+    }
 
-
-	public void setContraseña(String contraseña) {
-		this.contraseña = contraseña;
-	}
-
-
-	public GruposEmpleados getGrupo() {
-		return grupo;
-	}
-
-
-	public void setGrupo(GruposEmpleados grupo) {
-		this.grupo = grupo;
-	}
-
-
-	public Float getCoeficienteParcialidad() {
-		return coeficienteParcialidad;
-	}
-
-
-	public void setCoeficienteParcialidad(Float coeficienteParcialidad) {
-		this.coeficienteParcialidad = coeficienteParcialidad;
-	}
-
-
-	public EnumSet<Funcion> getFunciones() {
-		return funciones;
-	}
-
-
-	public void setFunciones(EnumSet<Funcion> funciones) {
-		this.funciones = funciones;
-	}
-
-
-	@Override
+    /**
+     * @param grupo the grupo to set
+     */
+    public void setGrupo(GruposEmpleados grupo) {
+        this.grupo = grupo;
+    }
+    @Override
     public String toString() {
 	return "Empleado [idEmpleado=" + idEmpleado + ", apellidos=" + apellidos + ", nombre=" + nombre + ", grupo="
 		+ grupo + ", funciones=" + funciones + "]\n";
