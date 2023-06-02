@@ -45,6 +45,7 @@ import exceptions.EmpleadoNoDisponibleExcepcion;
 import exceptions.FechaSinPrevisionExcepcion;
 import exceptions.IdTurnoRepetidaExcepcion;
 import utils.DAO;
+import utils.Session;
 
 import javax.swing.JList;
 import javax.swing.AbstractListModel;
@@ -82,7 +83,7 @@ public class PantallaTurnos extends Pantalla{
 	setFocusable(false);
 	this.setPreferredSize(new Dimension(1500, 1000));
 	setLayout(null);
-	plantilla = DAO.SelectEmpleados();
+	plantilla = Session.getInstance().getPlantilla();
 	try {
 	    String fechaUltimaPrevisionString = DAO.select("SELECT MAX(fecha) AS ultima_fecha FROM previsiones").toString().replace("[", "").replace("]", "");
 	    if (fechaUltimaPrevisionString != null && !fechaUltimaPrevisionString.isEmpty()) {
@@ -154,16 +155,19 @@ public class PantallaTurnos extends Pantalla{
                 // Obtén las fechas de inicio y fin
                 LocalDate fechaInicio = inicioDatePicker.getDate();
                 LocalDate fechaFin = finDatePicker.getDate();
+               
+        	   
+               
                 if (fechaFin.isBefore(fechaInicio)) {
                     // Muestra un mensaje de error y retorna
                     JOptionPane.showMessageDialog(null, "La fecha de fin no puede ser anterior a la fecha de inicio.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 // Verificar si la fecha de fin es mayor a la fecha de fechaUltimaPrevision
-                if (fechaFin.isAfter(fechaUltimaPrevision)) {
-                    // Lanzar una excepción personalizada
+                if (fechaUltimaPrevision == null || fechaFin.isAfter(fechaUltimaPrevision)) {
+                    
                     try {
-                        throw new FechaSinPrevisionExcepcion("Estas intentando generar turnos para un dia en el que no tenemos cargada la prevision");
+                        throw new FechaSinPrevisionExcepcion("Estas intentando generar o ver turnos para un dia en el que no tenemos cargada la prevision");
                     } catch (FechaSinPrevisionExcepcion ex) {
                         ex.printStackTrace();
                         JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -177,10 +181,20 @@ public class PantallaTurnos extends Pantalla{
                 String selectedAction = (String) accionComboBox.getSelectedItem();
                 if (selectedAction.equals("Generar Turnos")) {
                     // Llama a la función generarTurnos() para cada fecha en la lista
-                   
+                    try {
+                	    if (finDatePicker.getDate().isBefore(fechaUltimoTurno) || finDatePicker.getDate().isEqual(fechaUltimoTurno)||inicioDatePicker.getDate().isBefore(fechaUltimoTurno)) {
+                	        throw new IdTurnoRepetidaExcepcion("Estas intentando generar o ver turnos para un dia en el que no tenemos cargada la prevision");
+                	    }
+                	} catch (IdTurnoRepetidaExcepcion ex) {
+                	    JOptionPane.showMessageDialog(null,
+                	        ex.getMessage(),
+                	        " Ya hay turnos Generados",
+                	        JOptionPane.ERROR_MESSAGE);
+                	    return;
+                	}     
                     fechas.forEach(date -> {
-                        // Aquí tendrías que crear tu objeto PrevisionFecha
-                        // Para este ejemplo, asumiré que tienes un método que retorna un objeto PrevisionFecha dado un LocalDate
+                        
+  
                         try {
                             previsionFecha = new PrevisionFecha(date);
                         } catch (SQLException e1) {
@@ -190,9 +204,7 @@ public class PantallaTurnos extends Pantalla{
 
                         // Ahora generamos los turnos
                         try {
-                            List<Turno> turnosGenerados = p.generarTurnos(previsionFecha);
-                            // Aquí puedes hacer lo que quieras con los turnos generados
-                            // Por ejemplo, podrías agregarlos a tu lista de turnos
+                            List<Turno> turnosGenerados = p.generarTurnos(previsionFecha);                    
                             turnos.addAll(turnosGenerados);
                         } catch (IOException ex) {
                             ex.printStackTrace();
@@ -204,14 +216,13 @@ public class PantallaTurnos extends Pantalla{
                                          "Selecciona Ver Turnos",
                                          " Ya hay turnos Generados",
                                          JOptionPane.ERROR_MESSAGE);
-                        	
                         }
 
                         turnosDatePicker.setDate(fechaInicio);
-                        // Actualiza los datos del gráfico con los nuevos turnos generados
-                        turnoChart.setDatos(fechaInicio, turnos);  // Asegúrate de pasar la fecha correspondiente aquí
 
-                        // Actualiza el JComboBox con los IDs de los nuevos turnos
+                        turnoChart.setDatos(fechaInicio, turnos); 
+
+                    
                         turnosComboBox.removeAllItems();
                         for (Turno turno : turnos) {
                             if (turno.getFechaTurno().equals(turnosDatePicker.getDate())) {
@@ -224,7 +235,7 @@ public class PantallaTurnos extends Pantalla{
                         actualizarTablaEmpleados(verEmpleadosDisponiblesArrayList(selectedTurno,plantilla));
                         if(fechaUltimoTurno==null) {
                             fechaUltimoTurno = finDatePicker.getDate();
-                           
+                         
                         }
                     });
                 } else {
@@ -241,13 +252,12 @@ public class PantallaTurnos extends Pantalla{
                                     "No hay turnos generados en el rango de fechas seleccionado",
                                     "Error",
                                     JOptionPane.ERROR_MESSAGE);
-                            return; // Agregamos un return para salir del método actionPerformed
+                            return; 
                         }
                         for (String idTurno : turnosIdList) {
                             try {
                                 Turno turno = new Turno(idTurno);
-                                // Aquí puedes hacer lo que necesites con el turno
-                                // Por ejemplo, podrías agregarlo a tu lista de turnos
+
                                 turnos.add(turno);
                             } catch (SQLException e1) {
                                 e1.printStackTrace();
@@ -258,7 +268,7 @@ public class PantallaTurnos extends Pantalla{
                     }
                     turnosDatePicker.setDate(fechaInicio);
                     // Actualiza los datos del gráfico con los nuevos turnos generados
-                    turnoChart.setDatos(fechaInicio, turnos);  // Asegúrate de pasar la fecha correspondiente aquí
+                    turnoChart.setDatos(fechaInicio, turnos); 
 
                     // Actualiza el JComboBox con los IDs de los nuevos turnos
                     turnosComboBox.removeAllItems();
@@ -290,10 +300,10 @@ public class PantallaTurnos extends Pantalla{
         add(turnosDatePicker);
         turnosDatePicker.setLayout(null);
         
-        JButton leftArrow = new JButton("<="); // usa tu propio texto o icono
-        leftArrow.setBounds(59, 158, 54, 35); // ajusta la posición y el tamaño según lo necesites
+        JButton leftArrow = new JButton("<="); 
+        leftArrow.setBounds(59, 158, 54, 35);
         add(leftArrow);
-        // manejador de eventos para la flecha izquierda
+       
         leftArrow.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -321,8 +331,8 @@ public class PantallaTurnos extends Pantalla{
             }
         });
 
-        JButton rightArrow = new JButton("=>"); // usa tu propio texto o icono
-        rightArrow.setBounds(149, 158, 54, 35); // ajusta la posición y el tamaño según lo necesites
+        JButton rightArrow = new JButton("=>"); 
+        rightArrow.setBounds(149, 158, 54, 35); 
         add(rightArrow);
         // manejador de eventos para la flecha derecha
         rightArrow.addActionListener(new ActionListener() {
@@ -352,7 +362,7 @@ public class PantallaTurnos extends Pantalla{
             }
         });
         // Crear un JComboBox para la selección de turnos
-        turnosComboBox.setBounds(45, 219, 167, 35);  // ajusta la posición y tamaño según tus necesidades
+        turnosComboBox.setBounds(45, 219, 167, 35); 
         add(turnosComboBox);
         LocalDate fechaSeleccionada = turnosDatePicker.getDate();
         
@@ -381,11 +391,11 @@ public class PantallaTurnos extends Pantalla{
 
      // Crear los TimePickers para la selección de hora de inicio y fin
      TimePicker inicioTimePicker = new TimePicker();
-     inicioTimePicker.setBounds(45, 284, 167, 35);  // ajusta la posición y tamaño según tus necesidades
+     inicioTimePicker.setBounds(45, 284, 167, 35);
      add(inicioTimePicker);
 
      TimePicker finTimePicker = new TimePicker();
-     finTimePicker.setBounds(45, 350, 167, 35);  // ajusta la posición y tamaño según tus necesidades
+     finTimePicker.setBounds(45, 350, 167, 35); 
      add(finTimePicker);
      JComboBox<Empleado> empleadosComboBox = new JComboBox();
      empleadosComboBox.setBounds(45, 419, 167, 35);
@@ -440,13 +450,11 @@ public class PantallaTurnos extends Pantalla{
 	    turnoChart = new TurnoChart("Turnos " ,turnos, turnosDatePicker.getDate());
 	
 
-        // Configura los datos de turno en el gráfico
-        // Asegúrate de tener una lista válida de turnos para pasársela a setDatos
-        // turnoChart.setDatos(tusTurnos);
+ 
 
-        // Añadir el ChartPanel del gráfico al panel de la aplicación
+       
         ChartPanel chartPanel = turnoChart.getChartPanel();
-        chartPanel.setBounds(275, 120, 850, 750);  // Puedes cambiar estos valores para ajustar la posición y el tamaño del gráfico
+        chartPanel.setBounds(275, 120, 850, 750);  
         add(chartPanel);
         
         JButton actualizarTurnoButton = new JButton("Actualizar turno");

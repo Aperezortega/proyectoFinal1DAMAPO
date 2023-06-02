@@ -35,6 +35,8 @@ import clases.Empleado;
 import clases.Registro;
 import clases.Turno;
 import utils.DAO;
+import utils.Session;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -53,11 +55,7 @@ public class PantallaTAndA extends Pantalla {
         super(v);
         this.setPreferredSize(new Dimension(1500, 1000));
         setLayout(null);
-        try {
-            plantilla = DAO.SelectEmpleados();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        plantilla = Session.getInstance().getPlantilla();
 
         inicioDatePicker = new DatePicker();
         inicioDatePicker.setBounds(54, 61, 173, 35);

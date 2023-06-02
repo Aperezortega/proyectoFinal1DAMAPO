@@ -196,9 +196,7 @@ public class Ventana extends JFrame{
 	if(clase.equals(PantallaTAndA.class)) {
 	    this.setContentPane(new PantallaTAndA(this));
 	}
-	if(clase.equals(PantallaInformes.class)) {
-	    this.setContentPane(new PantallaInformes(this));
-	}
+	
 	
 	this.getContentPane().setVisible(true);
 	
@@ -245,9 +243,7 @@ public class Ventana extends JFrame{
    	if(clase.equals(PantallaTAndA.class)) {
    	    this.setContentPane(new PantallaTAndA(this));
    	}
-   	if(clase.equals(PantallaInformes.class)) {
-   	    this.setContentPane(new PantallaInformes(this));
-   	}
+   	
    	
    	this.getContentPane().setVisible(true);
    	

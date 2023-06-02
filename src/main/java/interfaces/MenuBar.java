@@ -114,20 +114,6 @@ public class MenuBar extends JMenuBar{
 		        });
 		        mnNewMenu_1.add(mntmNewMenuItem_ver);
 		
-		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Requisitos");
-		mntmNewMenuItem_3.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        try {
-		            v.cambiarAPantalla(PantallaRequisitosEmpleado.class);
-		        } catch (IOException e1) {
-		            e1.printStackTrace();
-		        } catch (SQLException e1) {
-			    // TODO Auto-generated catch block
-			    e1.printStackTrace();
-			}
-		    }
-		});
-		mnNewMenu_1.add(mntmNewMenuItem_3);
 		
 		JMenuItem mntmNewMenuItem_4 = new JMenuItem("Turnos");
 		mntmNewMenuItem_4.addActionListener(new ActionListener() {
@@ -162,22 +148,7 @@ public class MenuBar extends JMenuBar{
 		});
 		mnNewMenu_2.add(mntmNewMenuItem_5);
 		
-		JMenu mnNewMenu_3 = new JMenu("Informes");
-		this.add(mnNewMenu_3);
-		JMenuItem mntmNewMenuItem_6 = new JMenuItem("Generar Informe");
-		mntmNewMenuItem_6.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        try {
-		            v.cambiarAPantalla(PantallaInformes.class);
-		        } catch (IOException e1) {
-		            e1.printStackTrace();
-		        } catch (SQLException e1) {
-			    // TODO Auto-generated catch block
-			    e1.printStackTrace();
-			}
-		    }
-		});
-		mnNewMenu_3.add(mntmNewMenuItem_6);
+
 		this.add(Box.createHorizontalGlue());
 		JLabel labelEmail = new JLabel(Session.getInstance().getEmpleadoActual().getEmail());
 		this.add(labelEmail);

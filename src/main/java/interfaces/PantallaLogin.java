@@ -44,7 +44,6 @@ public class PantallaLogin extends Pantalla {
     private JPasswordField txtPassword;
     private JTextField txtEmailEmpleado;
     private Image backgroundImage;
- 
 	public PantallaLogin(Ventana v) throws IOException {
 	   super(v);
 		setLayout(null);
@@ -77,6 +76,8 @@ public class PantallaLogin extends Pantalla {
 				
 				 try {
 					ventana.cambiarAPantalla(PantallaMenu.class);
+					Session.getInstance().setPlantilla(DAO.SelectEmpleados());
+					
 				    } catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -89,7 +90,7 @@ public class PantallaLogin extends Pantalla {
 				JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
 			    }catch(UsuarioNoExisteExcepcion e1) {
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(null, "El suario no existe", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "El usuario no existe", "Error", JOptionPane.ERROR_MESSAGE);
 			    }catch(ContraseñaInvalidaExcepcion e1) {
 				e1.printStackTrace();
 				JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
@@ -136,8 +137,10 @@ public class PantallaLogin extends Pantalla {
 		            e1.printStackTrace();
 		        } catch (UsuarioNoExisteExcepcion e1) {
 		            e1.printStackTrace();
+		            JOptionPane.showMessageDialog(null, "El usuario no existe", "Error", JOptionPane.ERROR_MESSAGE);
 		        } catch (ContraseñaInvalidaExcepcion e1) {
 		            e1.printStackTrace();
+		            JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
 		        }
 		        /*
 		        comprueba que hay turno
@@ -189,8 +192,10 @@ public class PantallaLogin extends Pantalla {
 			            e1.printStackTrace();
 			        } catch (UsuarioNoExisteExcepcion e1) {
 			            e1.printStackTrace();
+			            JOptionPane.showMessageDialog(null, "El usuario no existe", "Error", JOptionPane.ERROR_MESSAGE);
 			        } catch (ContraseñaInvalidaExcepcion e1) {
 			            e1.printStackTrace();
+			            JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
 			        }
 			        /*
 			        comprueba que hay turno

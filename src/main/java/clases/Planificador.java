@@ -195,46 +195,7 @@ import enums.TipoTurno;
             return empleadosDisponibles;
         } 
         
-        
-        
-        
-        
-        /*
-        public ArrayList<Empleado> verEmpleadosDisponibles(String idTurno, ArrayList<Empleado> plantilla) {
-            ArrayList<Empleado> empleadosDisponibles = new ArrayList<Empleado>();
-            for (Turno turno : listaTurnos) {
-                if (turno.getIdTurno().equals(idTurno)) {
-                   TipoTurno tipoTurno = turno.getTipoTurno();
-                   LocalDate fecha =turno.getFechaTurno();
-                   for( Empleado e: plantilla) {
-                       switch (tipoTurno){
-                       
-                       	case MAÑANA:
-                       	if(e.isWorkinMañanas(fecha)) {
-                 	   empleadosDisponibles.add(e);
-                       	}
-                       	    break;
-                       
-                       case TARDE:
-                	   if(e.isWorkinTardes(fecha)) {
-                     	   empleadosDisponibles.add(e);
-                           	}
-                	   break;
-                
-                       }
-                       
-                       
-                       
-                       }
-                       
-                   }
-                   
-            
-                }
-            return empleadosDisponibles; 
-        }
-          */
-        
+      
         
         private byte calcularNumCajeros(int visitas) throws IOException {
             if(requerimientos==null) {
@@ -307,9 +268,6 @@ import enums.TipoTurno;
 	    
 	
 
-	/**
-	 * @param listaTurnos the listaTurnos to set
-	 */
 	
 
 	@Override

@@ -77,6 +77,9 @@ public class PantallaCargarPrevision extends Pantalla {
                     } catch (IOException ex) {
                         ex.printStackTrace();
                         JOptionPane.showMessageDialog(null, "Error al leer el archivo Excel", "Error", JOptionPane.ERROR_MESSAGE);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Error al cargar el archivo. Asegúrate de que sea un archivo Excel válido.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
