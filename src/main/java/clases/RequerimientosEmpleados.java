@@ -1,98 +1,124 @@
 package clases;
 
-
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Clase que representa los requerimientos de empleados para una cantidad de visitas.
+ */
 public class RequerimientosEmpleados {
 
     private int visitas;
     private byte numeroCajeros;
     private byte numeroAlmacen;
     private byte numeroAttPublico;
-    /**
-     * @param visitas
-     * @param numeroCajeros
-     * @param numeroAlmacen
-     * @param numeroAttPublico
-     * @throws IOException 
-     */
-    public RequerimientosEmpleados(Integer visitas, byte numeroCajeros, byte numeroAlmacen, byte numAttPublico) {
-	super();
-	
-            this.visitas = visitas;
-            this.numeroCajeros = numeroCajeros;
-            this.numeroAlmacen = numeroAlmacen;
-            this.numeroAttPublico = numAttPublico;
-        }
-	
-    public static String imprimirRequerimientos(ArrayList<RequerimientosEmpleados> requerimientos) {
-	    String ret ="";
-	    for (RequerimientosEmpleados req : requerimientos) {
-	        ret+=" " + req.toString();
-	    }
-	    return ret;
-	}
 
-    
     /**
-     * @return the visitas
+     * Constructor de RequerimientosEmpleados.
+     *
+     * @param visitas         La cantidad de visitas requerida.
+     * @param numeroCajeros   El número de cajeros requerido.
+     * @param numeroAlmacen   El número de operarios de almacén requerido.
+     * @param numeroAttPublico El número de operarios de atención al público requerido.
+     */
+    public RequerimientosEmpleados(int visitas, byte numeroCajeros, byte numeroAlmacen, byte numeroAttPublico) {
+        this.visitas = visitas;
+        this.numeroCajeros = numeroCajeros;
+        this.numeroAlmacen = numeroAlmacen;
+        this.numeroAttPublico = numeroAttPublico;
+    }
+
+    /**
+     * Imprime los requerimientos de empleados.
+     *
+     * @param requerimientos La lista de requerimientos de empleados.
+     * @return Una cadena de texto con los requerimientos de empleados.
+     */
+    public static String imprimirRequerimientos(ArrayList<RequerimientosEmpleados> requerimientos) {
+        StringBuilder ret = new StringBuilder();
+        for (RequerimientosEmpleados req : requerimientos) {
+            ret.append(" ").append(req.toString());
+        }
+        return ret.toString();
+    }
+
+    /**
+     * Obtiene la cantidad de visitas requerida.
+     *
+     * @return La cantidad de visitas requerida.
      */
     public int getVisitas() {
         return visitas;
     }
+
     /**
-     * @param visitas the visitas to set
+     * Establece la cantidad de visitas requerida.
+     *
+     * @param visitas La cantidad de visitas requerida.
      */
     public void setVisitas(int visitas) {
         this.visitas = visitas;
     }
+
     /**
-     * @return the numeroCajeros
+     * Obtiene el número de cajeros requerido.
+     *
+     * @return El número de cajeros requerido.
      */
     public byte getNumeroCajeros() {
-        return (byte) numeroCajeros;
+        return numeroCajeros;
     }
+
     /**
-     * @param numeroCajeros the numeroCajeros to set
+     * Establece el número de cajeros requerido.
+     *
+     * @param numeroCajeros El número de cajeros requerido.
      */
     public void setNumeroCajeros(byte numeroCajeros) {
         this.numeroCajeros = numeroCajeros;
     }
+
     /**
-     * @return the numeroAlmacen
+     * Obtiene el número de operarios de almacén requerido.
+     *
+     * @return El número de operarios de almacén requerido.
      */
-    public int getNumeroAlmacen() {
+    public byte getNumeroAlmacen() {
         return numeroAlmacen;
     }
+
     /**
-     * @param numeroAlmacen the numeroAlmacen to set
+     * Establece el número de operarios de almacén requerido.
+     *
+     * @param numeroAlmacen El número de operarios de almacén requerido.
      */
     public void setNumeroAlmacen(byte numeroAlmacen) {
         this.numeroAlmacen = numeroAlmacen;
     }
+
     /**
-     * @return the numeroAttPublico
+     * Obtiene el número de operarios de atención al público requerido.
+     *
+     * @return El número de operarios de atención al público requerido.
      */
-    public int getNumeroAttPublico() {
+    public byte getNumeroAttPublico() {
         return numeroAttPublico;
     }
+
     /**
-     * @param numeroAttPublico the numeroAttPublico to set
+     * Establece el número de operarios de atención al público requerido.
+     *
+     * @param numeroAttPublico El número de operarios de atención al público requerido.
      */
     public void setNumeroAttPublico(byte numeroAttPublico) {
         this.numeroAttPublico = numeroAttPublico;
     }
+
     @Override
     public String toString() {
-	return "RequerimientosEmpleados [visitas=" + visitas + ", numeroCajeros=" + numeroCajeros + ", numeroAlmacen="
-		+ numeroAlmacen + ", numeroAttPublico=" + numeroAttPublico + "]\n";
+        return "RequerimientosEmpleados [visitas=" + visitas + ", numeroCajeros=" + numeroCajeros + ", numeroAlmacen="
+                + numeroAlmacen + ", numeroAttPublico=" + numeroAttPublico + "]\n";
     }
-    
-    
-    
-    
 }
+
 
 

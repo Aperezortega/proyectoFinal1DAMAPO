@@ -1,3 +1,4 @@
+/* creo que esta clase no se usa
 package clases;
 
 import java.util.ArrayList;
@@ -75,3 +76,4 @@ public class GrupoEmpleados {
     }
 
 }
+*/

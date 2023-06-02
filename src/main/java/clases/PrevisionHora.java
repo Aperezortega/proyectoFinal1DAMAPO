@@ -1,58 +1,63 @@
 package clases;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.time.LocalTime;
 
-
-
+/**
+ * Clase que representa una previsión por hora.
+ */
 public class PrevisionHora {
     private LocalTime hora;
     private int visitas;
-    
-    
-    
+
     /**
-     * @param hora
-     * @param prevision
+     * Constructor de PrevisionHora.
+     *
+     * @param hora     La hora de la previsión.
+     * @param visitas  El número de visitas en esa hora.
      */
-    public PrevisionHora(LocalTime hora, int prevision) {
-	super();
-	this.hora = hora;
-	this.visitas = prevision;
+    public PrevisionHora(LocalTime hora, int visitas) {
+        this.hora = hora;
+        this.visitas = visitas;
     }
+
     /**
-     * @return the hora
+     * Obtiene la hora de la previsión.
+     *
+     * @return La hora de la previsión.
      */
     public LocalTime getHora() {
         return hora;
     }
+
     /**
-     * @param hora the hora to set
+     * Establece la hora de la previsión.
+     *
+     * @param hora La hora de la previsión.
      */
     public void setHora(LocalTime hora) {
         this.hora = hora;
     }
+
     /**
-     * @return the prevision
+     * Obtiene el número de visitas en esa hora.
+     *
+     * @return El número de visitas en esa hora.
      */
     public int getVisitas() {
         return visitas;
     }
+
     /**
-     * @param prevision the prevision to set
+     * Establece el número de visitas en esa hora.
+     *
+     * @param visitas El número de visitas en esa hora.
      */
-    public void setVisitas(int prevision) {
-        this.visitas = prevision;
+    public void setVisitas(int visitas) {
+        this.visitas = visitas;
     }
+
     @Override
     public String toString() {
-	return "Prevision" + hora + ": "  + visitas;
+        return "Prevision " + hora + ": " + visitas;
     }
-    
-    
-  
 }
