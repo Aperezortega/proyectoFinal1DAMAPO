@@ -181,8 +181,10 @@ public class PantallaTurnos extends Pantalla{
                 String selectedAction = (String) accionComboBox.getSelectedItem();
                 if (selectedAction.equals("Generar Turnos")) {
                     // Llama a la función generarTurnos() para cada fecha en la lista
+                   
                     try {
-                	    if (finDatePicker.getDate().isBefore(fechaUltimoTurno) || finDatePicker.getDate().isEqual(fechaUltimoTurno)||inicioDatePicker.getDate().isBefore(fechaUltimoTurno)) {
+                	
+                	    if (fechaUltimoTurno != null && finDatePicker.getDate().isBefore(fechaUltimoTurno) || fechaUltimoTurno != null &&  finDatePicker.getDate().isEqual(fechaUltimoTurno)||fechaUltimoTurno != null && inicioDatePicker.getDate().isBefore(fechaUltimoTurno)) {
                 	        throw new IdTurnoRepetidaExcepcion("Estas intentando generar o ver turnos para un dia en el que no tenemos cargada la prevision");
                 	    }
                 	} catch (IdTurnoRepetidaExcepcion ex) {
