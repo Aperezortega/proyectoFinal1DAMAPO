@@ -93,7 +93,7 @@ public class Empleado {
     
     public Empleado(String email, String pass) throws SQLException, UsuarioNoExisteExcepcion, ContraseñaInvalidaExcepcion {
    	super();
-   	ArrayList<String>consulta = DAO.select("select * from empleados where email ='"+email +"'");
+   	ArrayList<String>consulta = DAO.selectAndPrint("select * from empleados where email ='"+email +"'");
    	
    	if(consulta.isEmpty()) {
    	    throw new UsuarioNoExisteExcepcion("No existe el usuario con el email "+email);
@@ -120,7 +120,7 @@ public class Empleado {
              if (skill3==1) {
                  funcionesList.add(Funcion.ATTPUBLICO);
              }
-             if (skill1==1) {
+             if (skill4==1) {
                  funcionesList.add(Funcion.SUPERVISOR);
              }
 

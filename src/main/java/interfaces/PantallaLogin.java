@@ -8,6 +8,10 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -16,8 +20,11 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import clases.Empleado;
+import clases.Turno;
+import enums.Funcion;
 import exceptions.ContraseñaInvalidaExcepcion;
 import exceptions.UsuarioNoExisteExcepcion;
+import utils.DAO;
 import utils.Session;
 
 import javax.swing.JLabel;
@@ -65,12 +72,18 @@ public class PantallaLogin extends Pantalla {
 			    try {
 				Empleado empleadoActual= new Empleado(txtEmailEmpleado.getText(),passwordAString) ;
 				Session.getInstance().setEmpleadoActual(empleadoActual);
+				if(empleadoActual.tieneFuncionBoolean(Funcion.SUPERVISOR)) {
+				    
+				
 				 try {
 					ventana.cambiarAPantalla(PantallaMenu.class);
 				    } catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				    }
+				}else {
+				    JOptionPane.showMessageDialog(null, "Acceso no autorizado", "Error de autenticación", JOptionPane.ERROR_MESSAGE);
+				}
 			    } catch (SQLException e1) {
 				e1.printStackTrace();
 				JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
@@ -112,10 +125,109 @@ public class PantallaLogin extends Pantalla {
 		add(lblNewLabel_2);
 		
 		JButton btnNewButton_1 = new JButton("Check in");
+		btnNewButton_1.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        char[] password = txtPassword.getPassword();
+		        String passwordAString = new String(password);
+		        Empleado empleadoActual = null;
+		        try {
+		            empleadoActual = new Empleado(txtEmailEmpleado.getText(), passwordAString);
+		        } catch (SQLException e1) {
+		            e1.printStackTrace();
+		        } catch (UsuarioNoExisteExcepcion e1) {
+		            e1.printStackTrace();
+		        } catch (ContraseñaInvalidaExcepcion e1) {
+		            e1.printStackTrace();
+		        }
+		        /*
+		        comprueba que hay turno
+		        si hay inserta
+		        si no crea un turno e inserta
+		        */
+		        LocalDate fechaHoy = LocalDate.now();
+		        String query = "SELECT id_turno FROM turnos WHERE fecha_turno = '"
+		                + fechaHoy.toString()
+		                + "' AND id_empleado = '"
+		                + empleadoActual.getIdEmpleado()
+		                + "'";
+
+		        try {
+		            ArrayList<String> resultados = DAO.select(query);
+
+		            if (!resultados.isEmpty()) {
+		                String idTurno = resultados.get(0);
+		                LocalTime checkInActual = LocalTime.now();
+		                query = "UPDATE turnos SET check_in = '" + checkInActual.toString() + "' WHERE id_turno = '" + idTurno + "'";
+		                DAO.insert(query);
+
+		                System.out.println("Insert realizado");
+		            } else {
+		                LocalTime checkInActual = LocalTime.now();
+		                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+		                Turno nuevoTurno = new Turno("checkin" + empleadoActual.getIdEmpleado() + checkInActual.format(formatter).toString(), fechaHoy, empleadoActual, checkInActual);
+
+		                System.out.println("Nuevo turno creado e insert realizado");
+		            }
+		        } catch (SQLException e1) {
+		            e1.printStackTrace();
+		        }
+		    }
+		});
+
 		btnNewButton_1.setBounds(138, 371, 100, 23);
 		add(btnNewButton_1);
 		
 		JButton btnNewButton_2 = new JButton("Check out");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			    char[] password = txtPassword.getPassword();
+			        String passwordAString = new String(password);
+			        Empleado empleadoActual = null;
+			        try {
+			            empleadoActual = new Empleado(txtEmailEmpleado.getText(), passwordAString);
+			        } catch (SQLException e1) {
+			            e1.printStackTrace();
+			        } catch (UsuarioNoExisteExcepcion e1) {
+			            e1.printStackTrace();
+			        } catch (ContraseñaInvalidaExcepcion e1) {
+			            e1.printStackTrace();
+			        }
+			        /*
+			        comprueba que hay turno
+			        si hay inserta
+			        si no crea un turno e inserta
+			        */
+			        LocalDate fechaHoy = LocalDate.now();
+			        String query = "SELECT id_turno FROM turnos WHERE fecha_turno = '"
+			                + fechaHoy.toString()
+			                + "' AND id_empleado = '"
+			                + empleadoActual.getIdEmpleado()
+			                + "'";
+
+			        try {
+			            ArrayList<String> resultados = DAO.select(query);
+
+			            if (!resultados.isEmpty()) {
+			                String idTurno = resultados.get(0);
+			                LocalTime checkInActual = LocalTime.now();
+			                query = "UPDATE turnos SET check_out = '" + checkInActual.toString() + "' WHERE id_turno = '" + idTurno + "'";
+			                DAO.insert(query);
+
+			                System.out.println("Insert realizado");
+			            } else {
+			                LocalTime checkInActual = LocalTime.now();
+			                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+			                Turno nuevoTurno = new Turno("checkout" + empleadoActual.getIdEmpleado() + checkInActual.format(formatter).toString(), fechaHoy, empleadoActual, checkInActual);
+
+			                System.out.println("Nuevo turno creado e insert realizado");
+			            }
+			        } catch (SQLException e1) {
+			            e1.printStackTrace();
+			        }
+			    }
+			});   
+			    
+		
 		btnNewButton_2.setBounds(358, 371, 100, 23);
 		add(btnNewButton_2);
 		

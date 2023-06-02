@@ -61,7 +61,21 @@ public class Turno {
     
        }
            
-  
+    /*
+     * 
+     */
+    public Turno(String idTurno, LocalDate fechaTurno, Empleado empleado,LocalTime checkIn) {
+	this.idTurno=idTurno;
+	this.fechaTurno=fechaTurno;
+	this.empleado=empleado;
+	this.checkIn=checkIn;
+	try {
+	    DAO.insert("INSERT INTO turnos (id_turno, fecha_turno, id_empleado, check_in) VALUES ('"+idTurno+"', '"+fechaTurno+"', '"+empleado.getIdEmpleado()+"', '"+checkIn+"');");
+	} catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+    }
 
     
 
